@@ -1235,7 +1235,13 @@
 
         google.accounts.id.renderButton(
             document.getElementById('mainSignInBtn'),
-            { theme: 'outline', size: 'large', text: 'signin_with' }
+            {
+                type:  'standard',
+                theme: 'filled_blue',   // ← blue like the old custom button
+                size:  'large',
+                text:  'signin_with',
+                shape: 'rect'
+            }
         );
         }
 
@@ -1315,14 +1321,6 @@
             /* 3️⃣  wait for GIS, then build tokenClient --------------------------- */
             await waitForGIS();          // ↳ small polling helper you already have
             createTokenClient();         // <—- FIX: renamed from initTokenClient()
-
-            /* 4️⃣  enable the rendered button ------------------------------------- */
-            const btn = document.getElementById('mainSignInBtn');
-            if (btn) {
-            btn.disabled = false;
-            btn.textContent = '🔐 Sign in with Google';
-            /* no manual onclick; GIS button handles its own click */
-            }
 
             console.log('🎉 Google API + GIS ready');
         } catch (err) {
