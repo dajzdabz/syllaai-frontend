@@ -1184,46 +1184,43 @@
         // INITIALIZATION
         // ====================================================================
         
+        
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
         });
-        let googleIdTokenJWT = null;
+
+        /* ---------- helpers ---------- */
         function setupFileUpload () {
             const uploadSection = document.getElementById('uploadSection');
             const fileInput     = document.getElementById('fileInput');
 
-            // drag-over highlight
-            uploadSection.addEventListener('dragover', e => {
-                e.preventDefault();                 // allow drop
-                uploadSection.classList.add('dragover');
-            });
+        uploadSection.addEventListener('dragover', e => {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        });
 
-            uploadSection.addEventListener('dragleave', () =>
-                uploadSection.classList.remove('dragover')
-            );
+        uploadSection.addEventListener('dragleave', () =>
+            uploadSection.classList.remove('dragover')
+        );
 
-            uploadSection.addEventListener('drop', e => {
-                e.preventDefault();
-                uploadSection.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length) selectFile(files[0]);
-            });
+        uploadSection.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) selectFile(files[0]);
+        });
 
-            // plain file-picker
-            fileInput.addEventListener('change', e => {
-                if (e.target.files.length) selectFile(e.target.files[0]);
-            });
-            }
-        function initializeApp() {
-            console.log('🚀 Initializing SyllabAI...');
-            
-            // Set up file upload handlers
+        fileInput.addEventListener('change', e => {
+            if (e.target.files.length) selectFile(e.target.files[0]);
+        });
+        };   //  ← little semicolon added
+        /* ----------------------------------------------------------------------- */
+
+        function initializeApp () {
+            console.log('🚀 Initializing SyllabAI…');
             setupFileUpload();
-            initGoogleIdentity();   // <-- NEW
-            
-            // Show sign-in section initially
+            initGoogleIdentity();
             showSignInSection();
-            
             console.log('✅ App initialized');
         }
             
