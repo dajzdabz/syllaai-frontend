@@ -37,7 +37,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://apis.google.com/js/api.js" defer onload="onGoogleAPILoad()"></script>
 
     <style>
         /* Import typewriter-style fonts */
@@ -1171,7 +1170,6 @@
         // Google API state
         let isSignedIn = false;
         let tokenClient;
-        let gisInitialized = false;
         
         // Google API Configuration
         const GOOGLE_CLIENT_ID = '208074157418-pr4ks1ronvggb2blrqoomd8hhutkmco1.apps.googleusercontent.com';
@@ -1261,50 +1259,54 @@
         // GOOGLE API INTEGRATION
         ==================================================================== */
         
-        function onGoogleAPILoad() {
-            console.log('Google API script loaded');
-            initializeGoogleAPIWithGIS();
+              
+        /* ---------- gapi bootstrap ---------- */
+        function onGoogleAPILoad () {
+        console.log('Google API script loaded');
+        initializeGoogleAPIWithGIS();               // kick-off once gapi is here
         }
-        
-        async function initializeGoogleAPIWithGIS() {
-            try {
-                console.log('🔧 Starting Google API initialization with GIS...');
-                
-                await new Promise((resolve, reject) => {
-                    gapi.load('client', {
-                        callback: () => {
-                            console.log('✅ client module loaded');
-                            resolve();
-                        },
-                        onerror: (error) => {
-                            console.error('❌ Failed to load client:', error);
-                            reject(new Error('Failed to load Google Client module'));
-                        }
-                    });
-                });
-                
-                await gapi.client.init({
-                    apiKey: GOOGLE_API_KEY,
-                    discoveryDocs: DISCOVERY_DOCS
-                });
-                
-                await waitForGIS();
-                initTokenClient();
-                
-                console.log('🎉 Google API with GIS initialized successfully!');
-                
-                // Enable sign-in buttons
-                const mainSigninBtn = document.getElementById('mainSignInBtn');
-                if (mainSigninBtn) {
-                    mainSigninBtn.disabled = false;
-                    mainSigninBtn.textContent = '🔐 Sign in with Google';
-                    mainSigninBtn.onclick = signInWithGoogle;
+
+        async function initializeGoogleAPIWithGIS () {
+        try {
+            console.log('🔧 Starting Google API initialization with GIS…');
+
+            /* 1️⃣  load gapi.client ------------------------------------------------ */
+            await new Promise((resolve, reject) => {
+            gapi.load('client', {
+                callback () {
+                console.log('✅ gapi client module loaded');
+                resolve();
+                },
+                onerror (err) {
+                console.error('❌ gapi load failed', err);
+                reject(new Error('Failed to load Google Client module'));
                 }
-                
-            } catch (error) {
-                console.error('❌ Google API initialization failed:', error);
-                enableFallbackMode();
+            });
+            });
+
+            /* 2️⃣  init client ----------------------------------------------------- */
+            await gapi.client.init({
+            apiKey: GOOGLE_API_KEY,
+            discoveryDocs: DISCOVERY_DOCS
+            });
+
+            /* 3️⃣  wait for GIS, then build tokenClient --------------------------- */
+            await waitForGIS();          // ↳ small polling helper you already have
+            createTokenClient();         // <—- FIX: renamed from initTokenClient()
+
+            /* 4️⃣  enable the rendered button ------------------------------------- */
+            const btn = document.getElementById('mainSignInBtn');
+            if (btn) {
+            btn.disabled = false;
+            btn.textContent = '🔐 Sign in with Google';
+            /* no manual onclick; GIS button handles its own click */
             }
+
+            console.log('🎉 Google API + GIS ready');
+        } catch (err) {
+            console.error('❌ Google API init failed:', err);
+            enableFallbackMode();        // your existing retry/UX helper
+        }
         }
         
         async function waitForGIS() {
@@ -1325,46 +1327,6 @@
             }
             
             throw new Error('Google Identity Services failed to load');
-        }
-        
-        function initTokenClient() {
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: GOOGLE_CLIENT_ID,
-                scope: SCOPES,
-                callback: (response) => {
-                    if (response.error) {
-                        console.error('Token error:', response.error);
-                        showToast(`Sign-in failed: ${response.error}`, 'error');
-                        return;
-                    }
-                    
-                    console.log('✅ Token received, setting up client');
-                    gapi.client.setToken({access_token: response.access_token});
-                    isSignedIn = true;
-                    
-                    // Now authenticate with backend using Google token
-                    handleGoogleSignInSuccess(response);
-                }
-            });
-            
-            gisInitialized = true;
-            console.log('✅ Token client initialized');
-        }
-        
-        async function signInWithGoogle() {
-            try {
-                console.log('🔐 Starting Google sign-in...');
-                
-                if (!gisInitialized) {
-                    initTokenClient();
-                }
-                
-                tokenClient.requestAccessToken({prompt: 'consent'});
-                
-            } catch (error) {
-                console.error('Sign-in failed:', error);
-                showToast('Google sign-in failed. Please try again.', 'error');
-            }
         }
         
         function enableFallbackMode() {
