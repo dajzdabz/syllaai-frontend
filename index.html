@@ -1265,9 +1265,16 @@
             
             try {
                 setupFileUpload();
-                await initializeGoogleApis();
                 checkServerConnection();
                 showSignInSection();
+                
+                // Initialize Google APIs in background (non-blocking)
+                initializeGoogleApis().catch(error => {
+                    console.warn('⚠️ Google APIs failed to initialize:', error);
+                    showCustomSignInButton();
+                    enableDemoMode();
+                });
+                
                 console.log('✅ App initialized');
             } catch (error) {
                 console.error('❌ App initialization failed:', error);
@@ -1318,11 +1325,14 @@
             try {
                 console.log('🔧 Initializing Google APIs...');
                 
-                // Wait for Google APIs to be available
+                // Wait for Google APIs to be available with longer timeout
                 await waitForGoogleApis();
                 
-                // Initialize Google API client
+                // Initialize Google API client first
                 await initializeGapiClient();
+                
+                // Wait a bit more for Google Identity Services
+                await sleep(1000);
                 
                 // Initialize Google Identity Services
                 await initializeGoogleIdentity();
@@ -1338,19 +1348,20 @@
 
         async function waitForGoogleApis() {
             let attempts = 0;
-            const maxAttempts = 30;
+            const maxAttempts = 50; // Increased timeout
             
             while (attempts < maxAttempts) {
-                if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
+                if (typeof gapi !== 'undefined' && typeof google !== 'undefined' && 
+                    google.accounts && google.accounts.id) {
                     console.log('✅ Google APIs loaded');
                     return;
                 }
                 console.log(`⏳ Waiting for Google APIs... attempt ${attempts + 1}`);
-                await sleep(500);
+                await sleep(200);
                 attempts++;
             }
             
-            throw new Error('Google APIs failed to load');
+            throw new Error('Google APIs failed to load within timeout');
         }
 
         async function initializeGapiClient() {
@@ -1380,9 +1391,12 @@
 
         async function initializeGoogleIdentity() {
             try {
+                // Double-check that google is available
                 if (!google || !google.accounts || !google.accounts.id) {
                     throw new Error('Google Identity Services not available');
                 }
+
+                console.log('🔧 Initializing Google Identity Services...');
 
                 google.accounts.id.initialize({
                     client_id: GOOGLE_CLIENT_ID,
@@ -1391,21 +1405,23 @@
                     cancel_on_tap_outside: true
                 });
 
-                // Try to render the button
+                // Try to render the button with additional error handling
                 try {
-                    google.accounts.id.renderButton(
-                        document.getElementById('googleSignInBtn'),
-                        { 
+                    const buttonContainer = document.getElementById('googleSignInBtn');
+                    if (buttonContainer) {
+                        google.accounts.id.renderButton(buttonContainer, { 
                             theme: 'outline', 
                             size: 'large', 
                             text: 'signin_with',
                             width: 300
-                        }
-                    );
-                    googleAuthReady = true;
-                    console.log('✅ Google Sign-In button rendered');
+                        });
+                        googleAuthReady = true;
+                        console.log('✅ Google Sign-In button rendered');
+                    } else {
+                        throw new Error('Button container not found');
+                    }
                 } catch (buttonError) {
-                    console.warn('⚠️ Failed to render Google button, showing custom button:', buttonError);
+                    console.warn('⚠️ Failed to render Google button:', buttonError);
                     showCustomSignInButton();
                 }
 
@@ -1417,14 +1433,40 @@
         }
 
         function showCustomSignInButton() {
-            document.getElementById('customGoogleBtn').style.display = 'block';
+            const customBtn = document.getElementById('customGoogleBtn');
+            const googleBtn = document.getElementById('googleSignInBtn');
+            
+            if (customBtn) {
+                customBtn.style.display = 'block';
+            }
+            
+            // Hide the Google button container if it exists but is empty
+            if (googleBtn && (!googleBtn.children || googleBtn.children.length === 0)) {
+                googleBtn.style.display = 'none';
+            }
         }
 
         function handleCustomSignIn() {
-            if (google && google.accounts && google.accounts.id) {
-                google.accounts.id.prompt();
-            } else {
-                showToast('Google authentication is not available. Please refresh the page.', 'error');
+            // Wait for Google to be available
+            if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+                showToast('Google authentication is still loading. Please wait a moment...', 'warning');
+                
+                // Try again after a delay
+                setTimeout(() => {
+                    if (window.google && window.google.accounts && window.google.accounts.id) {
+                        window.google.accounts.id.prompt();
+                    } else {
+                        showToast('Google authentication is not available. Please refresh the page.', 'error');
+                    }
+                }, 2000);
+                return;
+            }
+            
+            try {
+                window.google.accounts.id.prompt();
+            } catch (error) {
+                console.error('Custom sign-in failed:', error);
+                showToast('Sign-in failed. Please refresh the page and try again.', 'error');
             }
         }
 
