@@ -1343,12 +1343,11 @@
             console.log('🔄 Enabling fallback mode');
             const mainSigninBtn = document.getElementById('mainSignInBtn');
             if (mainSigninBtn) {
-                mainSigninBtn.textContent = '⚠️ Google API Error - Try Refreshing';
-                mainSigninBtn.disabled = true;
-                mainSigninBtn.style.background = '#ff9800';
+                mainSigninBtn.innerHTML = '<button>Try Again</button>';
             }
-            showToast('Google API failed to load. Please refresh the page.', 'warning');
+            showToast('Google API failed to load. Please refresh.', 'warning');
         }
+
         
         function signOut() {
             try {
