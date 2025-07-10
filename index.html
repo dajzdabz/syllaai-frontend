@@ -1005,7 +1005,7 @@
                         📚 <strong>Professors:</strong> Create courses, upload syllabi, and automatically extract assignment deadlines<br>
                         🎓 <strong>Students:</strong> Join courses and sync all your academic events to Google Calendar
                     </p>
-                    <div id="mainSignInBtn" style="display:inline-block;"></div>
+                    <div id="mainSignInBtn"></div>
                 </div>
             </div>
 
@@ -1235,13 +1235,7 @@
 
         google.accounts.id.renderButton(
             document.getElementById('mainSignInBtn'),
-            {
-                type:  'standard',
-                theme: 'filled_blue',   // ← blue like the old custom button
-                size:  'large',
-                text:  'signin_with',
-                shape: 'rect'
-            }
+            { theme: 'outline', size: 'large', text: 'signin_with' }
         );
         }
 
@@ -1317,10 +1311,6 @@
             apiKey: GOOGLE_API_KEY,
             discoveryDocs: DISCOVERY_DOCS
             });
-
-            /* 3️⃣  wait for GIS, then build tokenClient --------------------------- */
-            await waitForGIS();          // ↳ small polling helper you already have
-            createTokenClient();         // <—- FIX: renamed from initTokenClient()
 
             console.log('🎉 Google API + GIS ready');
         } catch (err) {
