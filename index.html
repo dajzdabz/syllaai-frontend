@@ -5,42 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SyllabAI – Smart Syllabus Management Platform</title>
 
-    <!-- Strict Content-Security-Policy (unchanged) -->
+    <!-- Content Security Policy - Relaxed for development -->
     <meta http-equiv="Content-Security-Policy"
           content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:;
                    script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:;
                    frame-src 'self' https: http:;
                    connect-src 'self' https: http: ws: wss:;
-                   img-src   'self' data: blob: https: http:;
+                   img-src 'self' data: blob: https: http:;
                    style-src 'self' 'unsafe-inline' https: http:;
-                   font-src  'self' data: https: http:;
+                   font-src 'self' data: https: http:;
                    object-src 'none';
                    base-uri 'self';">
 
-    <!-- ---------- EARLY stub so Google can always find the callback ---------- -->
-    <script>
-      function onGoogleAPILoad() {
-        if (typeof initializeGoogleAPIWithGIS === 'function') {
-          initializeGoogleAPIWithGIS();
-        } else {
-          window.addEventListener('DOMContentLoaded', initializeGoogleAPIWithGIS);
-        }
-      }
-    </script>
-
-    <!-- Google client-library script – keep defer, drop async -->
-    <script defer
-            src="https://apis.google.com/js/api.js"
-            onload="onGoogleAPILoad()"></script>
-
-    <!-- Other external libraries -->
+    <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <!-- Google APIs -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
 
     <style>
         /* Import typewriter-style fonts */
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+        
         :root {
             /* Minimalist Color Palette */
             --primary-black: #1a1a1a;
@@ -111,6 +99,7 @@
             color: var(--accent-primary);
             text-decoration: none;
             letter-spacing: 1px;
+            cursor: pointer;
         }
 
         .user-menu {
@@ -181,7 +170,13 @@
             51%, 100% { opacity: 0; }
         }
 
-        .main-signin-btn {
+        .google-signin-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        .custom-google-btn {
             background: #4285f4;
             color: white;
             border: none;
@@ -194,16 +189,16 @@
             font-weight: 600;
             letter-spacing: 0.5px;
             box-shadow: var(--shadow-2);
-            margin-top: 24px;
+            display: none;
         }
 
-        .main-signin-btn:hover {
+        .custom-google-btn:hover {
             background: #3367d6;
             transform: translateY(-3px);
             box-shadow: var(--shadow-3);
         }
 
-        .main-signin-btn:disabled {
+        .custom-google-btn:disabled {
             background: var(--medium-gray);
             color: var(--secondary-black);
             cursor: not-allowed;
@@ -928,14 +923,48 @@
         .toast.warning { background: var(--accent-warning); color: var(--primary-black); }
 
         /* Utility Classes */
-        .error { background: rgba(255, 51, 51, 0.1); color: var(--accent-error); padding: 16px; border-radius: 8px; margin: 16px 0; display: none; border: 1px solid var(--accent-error); font-family: var(--font-system); }
-        .success { background: rgba(0, 212, 170, 0.1); color: var(--accent-secondary); padding: 16px; border-radius: 8px; margin: 16px 0; display: none; border: 1px solid var(--accent-secondary); font-family: var(--font-system); }
+        .error { 
+            background: rgba(255, 51, 51, 0.1); 
+            color: var(--accent-error); 
+            padding: 16px; 
+            border-radius: 8px; 
+            margin: 16px 0; 
+            display: none; 
+            border: 1px solid var(--accent-error); 
+            font-family: var(--font-system); 
+        }
+        
+        .success { 
+            background: rgba(0, 212, 170, 0.1); 
+            color: var(--accent-secondary); 
+            padding: 16px; 
+            border-radius: 8px; 
+            margin: 16px 0; 
+            display: none; 
+            border: 1px solid var(--accent-secondary); 
+            font-family: var(--font-system); 
+        }
 
         /* Animations */
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes slideIn { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        
+        @keyframes fadeIn { 
+            from { opacity: 0; } 
+            to { opacity: 1; } 
+        }
+        
+        @keyframes slideUp { 
+            from { transform: translateY(30px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
+        
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
 
         /* Responsive Design */
         @media (max-width: 768px) {
@@ -976,14 +1005,45 @@
                 flex-direction: column;
             }
         }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--medium-gray);
+            border-top: 4px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div>
+                <div class="loading-spinner"></div>
+                <p style="margin-top: 16px; color: var(--primary-black); font-family: var(--font-mono);">Loading...</p>
+            </div>
+        </div>
+
         <!-- Header -->
         <header class="header">
             <div class="header-left">
-                <a href="#" class="logo" onclick="showDashboard()">📚 SyllabAI</a>
+                <span class="logo" onclick="showDashboard()">📚 SyllabAI</span>
             </div>
             <div class="user-menu">
                 <div class="user-info-header" id="userInfoHeader" style="display: none;">
@@ -1005,8 +1065,18 @@
                         📚 <strong>Professors:</strong> Create courses, upload syllabi, and automatically extract assignment deadlines<br>
                         🎓 <strong>Students:</strong> Join courses and sync all your academic events to Google Calendar
                     </p>
-                    <div id="mainSignInBtn"></div>
+                    <div class="google-signin-container">
+                        <div id="googleSignInBtn"></div>
+                        <button class="custom-google-btn" id="customGoogleBtn" onclick="handleCustomSignIn()">
+                            🔐 Sign in with Google
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Demo Mode Notice -->
+            <div id="demoNotice" style="display: none; background: var(--accent-warning); color: var(--primary-black); padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                <strong>Demo Mode:</strong> Backend server unavailable. Using local demo functionality.
             </div>
 
             <!-- Professor Dashboard -->
@@ -1166,10 +1236,9 @@
         let selectedFile = null;
         let selectedCourse = null;
         let extractedEvents = [];
-        
-        // Google API state
-        let isSignedIn = false;
-        let tokenClient;
+        let demoMode = false;
+        let googleApiReady = false;
+        let googleAuthReady = false;
         
         // Google API Configuration
         const GOOGLE_CLIENT_ID = '208074157418-pr4ks1ronvggb2blrqoomd8hhutkmco1.apps.googleusercontent.com';
@@ -1178,216 +1247,214 @@
         const SCOPES = 'openid email profile https://www.googleapis.com/auth/calendar';
         
         // PDF.js worker configuration
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
         
         // ====================================================================
         // INITIALIZATION
         // ====================================================================
         
-        
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
         });
 
-        /* ---------- helpers ---------- */
-        function setupFileUpload () {
-            const uploadSection = document.getElementById('uploadSection');
-            const fileInput     = document.getElementById('fileInput');
-
-        uploadSection.addEventListener('dragover', e => {
-            e.preventDefault();
-            uploadSection.classList.add('dragover');
-        });
-
-        uploadSection.addEventListener('dragleave', () =>
-            uploadSection.classList.remove('dragover')
-        );
-
-        uploadSection.addEventListener('drop', e => {
-            e.preventDefault();
-            uploadSection.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length) selectFile(files[0]);
-        });
-
-        fileInput.addEventListener('change', e => {
-            if (e.target.files.length) selectFile(e.target.files[0]);
-        });
-        };   //  ← little semicolon added
-        /* ----------------------------------------------------------------------- */
-
-        function initializeApp () {
-            console.log('🚀 Initializing SyllabAI…');
-            setupFileUpload();
-            initGoogleIdentity();
-            showSignInSection();
-            console.log('✅ App initialized');
-        }
+        async function initializeApp() {
+            console.log('🚀 Initializing SyllabAI...');
+            showLoading(true);
             
-        // ───────────────────────────────────────────────────────────
-        //  1.  Render “Sign-in with Google” button (ID-token flow)
-        // ───────────────────────────────────────────────────────────
-        function initGoogleIdentity() {
-        google.accounts.id.initialize({
-            client_id: GOOGLE_CLIENT_ID,
-            callback: handleCredentialResponse,          // ID-token callback
-        });
-
-        google.accounts.id.renderButton(
-            document.getElementById('mainSignInBtn'),
-            { theme: 'outline', size: 'large', text: 'signin_with' }
-        );
-        }
-
-        // ───────────────────────────────────────────────────────────
-        //  2.  ID-token received  →  authenticate with backend
-        // ───────────────────────────────────────────────────────────
-        function handleCredentialResponse(res) {
-        googleIdTokenJWT = res.credential;             // JWT from GIS
-        signInWithBackend(googleIdTokenJWT)            // 🔒 issue backend JWT
-            .then(() => {
-            // 3.  Immediately request Calendar-scope OAuth token
-            tokenClient.requestAccessToken({ prompt: 'consent' });
-            })
-            .catch(err => {
-            console.error(err);
-            showToast('Authentication failed', 'error');
-            });
-        }
-
-        // ───────────────────────────────────────────────────────────
-        //  4.  OAuth access-token callback (Calendar scope)
-        // ───────────────────────────────────────────────────────────
-        function onAccessTokenResponse(resp) {
-        if (resp.error) { showToast(resp.error, 'error'); return; }
-        gapi.client.setToken({ access_token: resp.access_token });
-        isSignedIn = true;
-        showToast('Google Calendar connected!', 'success');
-        }
-
-        // ───────────────────────────────────────────────────────────
-        //  5.  Create tokenClient after gapi is ready
-        //      (call createTokenClient() from onGoogleAPILoad or similar)
-        // ───────────────────────────────────────────────────────────
-        function createTokenClient() {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: GOOGLE_CLIENT_ID,
-            scope: SCOPES,                               // must include Calendar scope
-            callback: onAccessTokenResponse,
-        });
-        }
-
-        /* ====================================================================
-        // GOOGLE API INTEGRATION
-        ==================================================================== */
-        
-              
-        /* ---------- gapi bootstrap ---------- */
-        function onGoogleAPILoad () {
-        console.log('Google API script loaded');
-        initializeGoogleAPIWithGIS();               // kick-off once gapi is here
-        }
-
-        async function initializeGoogleAPIWithGIS () {
             try {
-                console.log('🔧 Starting Google API initialization with GIS…');
-
-                /* 1️⃣ load gapi.client */
-                await new Promise((resolve, reject) => {
-                    gapi.load('client', {
-                        callback () {
-                        console.log('✅ gapi client module loaded');
-                        resolve();
-                    },
-                    onerror (err) {
-                        console.error('❌ gapi load failed', err);
-                        reject(new Error('Failed to load Google Client module'));
-                    }
-                });
-            });
-
-                /* 2️⃣ init client */
-                await gapi.client.init({
-                    apiKey: GOOGLE_API_KEY,
-                    discoveryDocs: DISCOVERY_DOCS
-                });
-
-                /* 3️⃣ wait for GIS, then build tokenClient */
-                await waitForGIS();
-                createTokenClient();
-
-                // ✅ DO NOT change innerHTML or textContent here!
-                // The official GIS iframe has been rendered by renderButton()
-                console.log('🎉 Google API + GIS ready');
-            }   catch (err) {
-                console.error('❌ Google API init failed:', err);
-                enableFallbackMode();
+                setupFileUpload();
+                await initializeGoogleApis();
+                checkServerConnection();
+                showSignInSection();
+                console.log('✅ App initialized');
+            } catch (error) {
+                console.error('❌ App initialization failed:', error);
+                showToast('App initialization failed. Some features may not work.', 'warning');
+                enableDemoMode();
+            } finally {
+                showLoading(false);
             }
         }
 
-        
-        async function waitForGIS() {
+        function setupFileUpload() {
+            const uploadSection = document.getElementById('uploadSection');
+            const fileInput = document.getElementById('fileInput');
+
+            uploadSection.addEventListener('dragover', e => {
+                e.preventDefault();
+                uploadSection.classList.add('dragover');
+            });
+
+            uploadSection.addEventListener('dragleave', () =>
+                uploadSection.classList.remove('dragover')
+            );
+
+            uploadSection.addEventListener('drop', e => {
+                e.preventDefault();
+                uploadSection.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length) selectFile(files[0]);
+            });
+
+            fileInput.addEventListener('change', e => {
+                if (e.target.files.length) selectFile(e.target.files[0]);
+            });
+        }
+
+        function handleUploadKeydown(event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                document.getElementById('fileInput').click();
+            }
+        }
+
+        // ====================================================================
+        // GOOGLE API INITIALIZATION
+        // ====================================================================
+
+        async function initializeGoogleApis() {
+            try {
+                console.log('🔧 Initializing Google APIs...');
+                
+                // Wait for Google APIs to be available
+                await waitForGoogleApis();
+                
+                // Initialize Google API client
+                await initializeGapiClient();
+                
+                // Initialize Google Identity Services
+                await initializeGoogleIdentity();
+                
+                console.log('✅ Google APIs initialized successfully');
+                
+            } catch (error) {
+                console.error('❌ Google API initialization failed:', error);
+                showCustomSignInButton();
+                throw error;
+            }
+        }
+
+        async function waitForGoogleApis() {
             let attempts = 0;
-            const maxAttempts = 20;
+            const maxAttempts = 30;
             
             while (attempts < maxAttempts) {
-                if (typeof google !== 'undefined' && 
-                    google.accounts && 
-                    google.accounts.oauth2 && 
-                    google.accounts.oauth2.initTokenClient) {
-                    console.log('✅ Google Identity Services available');
+                if (typeof gapi !== 'undefined' && typeof google !== 'undefined') {
+                    console.log('✅ Google APIs loaded');
                     return;
                 }
-                console.log(`⏳ Waiting for GIS... attempt ${attempts + 1}`);
+                console.log(`⏳ Waiting for Google APIs... attempt ${attempts + 1}`);
                 await sleep(500);
                 attempts++;
             }
             
-            throw new Error('Google Identity Services failed to load');
-        }
-        
-        function enableFallbackMode() {
-            const mainSigninBtn = document.getElementById('mainSignInBtn');
-            if (mainSigninBtn) {
-                mainSigninBtn.innerHTML = '<button onclick="location.reload()">Try Again</button>';
-            }
-            showToast('Google API failed to load. Please refresh.', 'warning');
+            throw new Error('Google APIs failed to load');
         }
 
-        function signOut() {
-            try {
-                // Clear backend auth
-                authToken = null;
-                currentUser = null;
-                selectedCourse = null;
-                
-                // Clear Google auth
-                if (isSignedIn) {
-                    const token = gapi.client.getToken();
-                    if (token && token.access_token) {
-                        google.accounts.oauth2.revoke(token.access_token, () => {
-                            console.log('Token revoked');
-                        });
+        async function initializeGapiClient() {
+            return new Promise((resolve, reject) => {
+                gapi.load('client', {
+                    callback: async () => {
+                        try {
+                            await gapi.client.init({
+                                apiKey: GOOGLE_API_KEY,
+                                discoveryDocs: DISCOVERY_DOCS
+                            });
+                            googleApiReady = true;
+                            console.log('✅ Google API client initialized');
+                            resolve();
+                        } catch (error) {
+                            console.error('❌ Google API client init failed:', error);
+                            reject(error);
+                        }
+                    },
+                    onerror: (error) => {
+                        console.error('❌ Failed to load Google API client:', error);
+                        reject(error);
                     }
-                    gapi.client.setToken('');
-                    isSignedIn = false;
+                });
+            });
+        }
+
+        async function initializeGoogleIdentity() {
+            try {
+                if (!google || !google.accounts || !google.accounts.id) {
+                    throw new Error('Google Identity Services not available');
                 }
-                
-                // Reset UI
-                showSignInSection();
-                
-                showToast('Signed out successfully', 'info');
-                
+
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: handleCredentialResponse,
+                    auto_select: false,
+                    cancel_on_tap_outside: true
+                });
+
+                // Try to render the button
+                try {
+                    google.accounts.id.renderButton(
+                        document.getElementById('googleSignInBtn'),
+                        { 
+                            theme: 'outline', 
+                            size: 'large', 
+                            text: 'signin_with',
+                            width: 300
+                        }
+                    );
+                    googleAuthReady = true;
+                    console.log('✅ Google Sign-In button rendered');
+                } catch (buttonError) {
+                    console.warn('⚠️ Failed to render Google button, showing custom button:', buttonError);
+                    showCustomSignInButton();
+                }
+
             } catch (error) {
-                console.error('Sign-out error:', error);
-                showToast('Sign-out completed', 'info');
+                console.error('❌ Google Identity Services init failed:', error);
+                showCustomSignInButton();
+                throw error;
             }
         }
-        
+
+        function showCustomSignInButton() {
+            document.getElementById('customGoogleBtn').style.display = 'block';
+        }
+
+        function handleCustomSignIn() {
+            if (google && google.accounts && google.accounts.id) {
+                google.accounts.id.prompt();
+            } else {
+                showToast('Google authentication is not available. Please refresh the page.', 'error');
+            }
+        }
+
         // ====================================================================
-        // BACKEND AUTHENTICATION
+        // AUTHENTICATION
         // ====================================================================
-        
+
+        async function handleCredentialResponse(response) {
+            try {
+                console.log('🔐 Received Google credential');
+                
+                if (!response.credential) {
+                    throw new Error('No credential received from Google');
+                }
+
+                // Try to authenticate with backend
+                try {
+                    await signInWithBackend(response.credential);
+                } catch (backendError) {
+                    console.warn('⚠️ Backend authentication failed, enabling demo mode:', backendError);
+                    enableDemoMode();
+                    await handleDemoSignIn(response.credential);
+                }
+                
+            } catch (error) {
+                console.error('❌ Authentication failed:', error);
+                showToast(`Authentication failed: ${error.message}`, 'error');
+            }
+        }
+
         async function signInWithBackend(googleToken) {
             try {
                 console.log('🔐 Signing in with backend...');
@@ -1399,11 +1466,12 @@
                     },
                     body: JSON.stringify({
                         token: googleToken
-                    })
+                    }),
+                    mode: 'cors'
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json();
+                    const error = await response.json().catch(() => ({ detail: 'Authentication failed' }));
                     throw new Error(error.detail || 'Authentication failed');
                 }
                 
@@ -1416,11 +1484,41 @@
                 updateUIForSignedInUser();
                 
             } catch (error) {
-                console.error('Backend sign-in failed:', error);
-                showToast(`Sign-in failed: ${error.message}`, 'error');
+                console.error('❌ Backend authentication failed:', error);
+                throw error;
             }
         }
-        
+
+        async function handleDemoSignIn(googleToken) {
+            try {
+                // Decode the JWT token to get user info
+                const payload = JSON.parse(atob(googleToken.split('.')[1]));
+                
+                currentUser = {
+                    id: 'demo-' + payload.sub,
+                    name: payload.name || 'Demo User',
+                    email: payload.email || 'demo@example.com',
+                    role: 'professor' // Default to professor for demo
+                };
+                
+                showToast('✅ Signed in (Demo Mode)!', 'success');
+                document.getElementById('demoNotice').style.display = 'block';
+                updateUIForSignedInUser();
+                
+            } catch (error) {
+                console.error('❌ Demo sign-in failed:', error);
+                currentUser = {
+                    id: 'demo-user',
+                    name: 'Demo User',
+                    email: 'demo@example.com',
+                    role: 'professor'
+                };
+                showToast('✅ Signed in (Demo Mode)!', 'success');
+                document.getElementById('demoNotice').style.display = 'block';
+                updateUIForSignedInUser();
+            }
+        }
+
         async function getCurrentUser() {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
@@ -1434,15 +1532,53 @@
                 }
                 
                 currentUser = await response.json();
-                console.log('Current user:', currentUser);
+                console.log('✅ Current user:', currentUser);
                 
                 return currentUser;
             } catch (error) {
-                console.error('Failed to get user info:', error);
+                console.error('❌ Failed to get user info:', error);
                 throw error;
             }
         }
-        
+
+        function signOut() {
+            try {
+                // Clear state
+                authToken = null;
+                currentUser = null;
+                selectedCourse = null;
+                selectedFile = null;
+                extractedEvents = [];
+                demoMode = false;
+                
+                // Clear Google auth
+                if (googleApiReady && gapi.client.getToken) {
+                    const token = gapi.client.getToken();
+                    if (token && token.access_token) {
+                        google.accounts.oauth2.revoke(token.access_token, () => {
+                            console.log('✅ Token revoked');
+                        });
+                    }
+                    gapi.client.setToken('');
+                }
+                
+                // Reset UI
+                showSignInSection();
+                document.getElementById('demoNotice').style.display = 'none';
+                
+                showToast('Signed out successfully', 'info');
+                
+            } catch (error) {
+                console.error('❌ Sign-out error:', error);
+                showToast('Signed out', 'info');
+                showSignInSection();
+            }
+        }
+
+        // ====================================================================
+        // UI MANAGEMENT
+        // ====================================================================
+
         function updateUIForSignedInUser() {
             // Hide sign-in section
             document.getElementById('signInSection').style.display = 'none';
@@ -1452,7 +1588,8 @@
             const userNameHeader = document.getElementById('userNameHeader');
             
             if (userInfoHeader && userNameHeader && currentUser) {
-                userNameHeader.textContent = `${currentUser.name} (${currentUser.role})`;
+                const roleDisplay = demoMode ? `${currentUser.role} (Demo)` : currentUser.role;
+                userNameHeader.textContent = `${currentUser.name} (${roleDisplay})`;
                 userInfoHeader.style.display = 'flex';
             }
             
@@ -1463,11 +1600,7 @@
                 showStudentDashboard();
             }
         }
-        
-        // ====================================================================
-        // DASHBOARD MANAGEMENT
-        // ====================================================================
-        
+
         function showSignInSection() {
             document.getElementById('signInSection').style.display = 'block';
             document.getElementById('professorDashboard').classList.remove('active');
@@ -1480,7 +1613,7 @@
                 userInfoHeader.style.display = 'none';
             }
         }
-        
+
         function showProfessorDashboard() {
             document.getElementById('signInSection').style.display = 'none';
             document.getElementById('professorDashboard').classList.add('active');
@@ -1488,7 +1621,7 @@
             
             loadMyCourses();
         }
-        
+
         function showStudentDashboard() {
             document.getElementById('signInSection').style.display = 'none';
             document.getElementById('professorDashboard').classList.remove('active');
@@ -1496,7 +1629,7 @@
             
             loadMyCourses();
         }
-        
+
         function showDashboard() {
             if (currentUser) {
                 if (currentUser.role === 'professor') {
@@ -1509,20 +1642,88 @@
                 document.getElementById('eventsSection').style.display = 'none';
             }
         }
-        
+
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        // ====================================================================
+        // DEMO MODE
+        // ====================================================================
+
+        function enableDemoMode() {
+            demoMode = true;
+            console.log('📝 Demo mode enabled');
+        }
+
+        async function checkServerConnection() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    timeout: 5000
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Server connection successful');
+                    return true;
+                }
+            } catch (error) {
+                console.warn('⚠️ Server connection failed, enabling demo mode:', error);
+                enableDemoMode();
+            }
+            return false;
+        }
+
+        function generateDemoCourses() {
+            if (currentUser.role === 'professor') {
+                return [
+                    {
+                        id: 'demo-course-1',
+                        code: 'CS101',
+                        title: 'Introduction to Computer Science',
+                        description: 'Learn the fundamentals of programming and computer science.',
+                        created_at: new Date().toISOString()
+                    },
+                    {
+                        id: 'demo-course-2',
+                        code: 'MATH201',
+                        title: 'Calculus II',
+                        description: 'Advanced calculus concepts and applications.',
+                        created_at: new Date().toISOString()
+                    }
+                ];
+            } else {
+                return [
+                    {
+                        id: 'demo-course-3',
+                        code: 'ENG101',
+                        title: 'English Composition',
+                        description: 'Writing and communication skills.',
+                        created_at: new Date().toISOString()
+                    }
+                ];
+            }
+        }
+
         // ====================================================================
         // COURSE MANAGEMENT
         // ====================================================================
-        
+
         async function loadMyCourses() {
             try {
-                const courses = await getUserCourses();
+                const courses = demoMode ? generateDemoCourses() : await getUserCourses();
                 displayUserCourses(courses);
             } catch (error) {
-                console.error('Failed to load courses:', error);
+                console.error('❌ Failed to load courses:', error);
+                if (!demoMode) {
+                    enableDemoMode();
+                    const courses = generateDemoCourses();
+                    displayUserCourses(courses);
+                }
             }
         }
-        
+
         async function getUserCourses() {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/courses/`, {
@@ -1532,7 +1733,7 @@
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json();
+                    const error = await response.json().catch(() => ({ detail: 'Failed to get courses' }));
                     throw new Error(error.detail || 'Failed to get courses');
                 }
                 
@@ -1540,12 +1741,11 @@
                 return courses;
                 
             } catch (error) {
-                console.error('Failed to get courses:', error);
-                showToast(`Failed to get courses: ${error.message}`, 'error');
-                return [];
+                console.error('❌ Failed to get courses:', error);
+                throw error;
             }
         }
-        
+
         function displayUserCourses(courses) {
             const container = currentUser.role === 'professor' 
                 ? document.getElementById('professorCourses')
@@ -1573,7 +1773,7 @@
                 </div>
             `).join('');
         }
-        
+
         function selectCourse(courseId, courseTitle, courseCode) {
             selectedCourse = {
                 id: courseId,
@@ -1591,20 +1791,20 @@
                 showToast(`Selected course: ${courseTitle} (${courseCode})`, 'info');
             }
         }
-        
+
         // ====================================================================
         // COURSE CREATION
         // ====================================================================
-        
+
         function showCreateCourseModal() {
             document.getElementById('createCourseModal').classList.add('show');
         }
-        
+
         function closeCreateCourseModal() {
             document.getElementById('createCourseModal').classList.remove('show');
             document.getElementById('createCourseForm').reset();
         }
-        
+
         async function handleCreateCourse(event) {
             event.preventDefault();
             
@@ -1622,15 +1822,30 @@
                     description: description || null
                 };
                 
-                const course = await createCourse(courseData);
-                closeCreateCourseModal();
-                loadMyCourses();
+                if (demoMode) {
+                    // Demo course creation
+                    const course = {
+                        id: 'demo-course-' + Date.now(),
+                        code: generateCourseCode(),
+                        title: courseData.title,
+                        description: courseData.description,
+                        created_at: new Date().toISOString()
+                    };
+                    
+                    showToast(`Demo course created! Share code: ${course.code}`, 'success');
+                    closeCreateCourseModal();
+                    loadMyCourses();
+                } else {
+                    await createCourse(courseData);
+                    closeCreateCourseModal();
+                    loadMyCourses();
+                }
                 
             } catch (error) {
-                // Error already handled in createCourse function
+                console.error('❌ Course creation failed:', error);
             }
         }
-        
+
         async function createCourse(courseData) {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/courses/`, {
@@ -1643,7 +1858,7 @@
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json();
+                    const error = await response.json().catch(() => ({ detail: 'Failed to create course' }));
                     throw new Error(error.detail || 'Failed to create course');
                 }
                 
@@ -1652,16 +1867,20 @@
                 return course;
                 
             } catch (error) {
-                console.error('Failed to create course:', error);
+                console.error('❌ Failed to create course:', error);
                 showToast(`Failed to create course: ${error.message}`, 'error');
                 throw error;
             }
         }
-        
+
+        function generateCourseCode() {
+            return Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
         // ====================================================================
         // COURSE JOINING (Students)
         // ====================================================================
-        
+
         async function handleJoinCourse() {
             const courseCode = document.getElementById('courseCodeInput').value.trim().toUpperCase();
             if (!courseCode) {
@@ -1670,14 +1889,21 @@
             }
             
             try {
-                await joinCourse(courseCode);
-                document.getElementById('courseCodeInput').value = '';
-                loadMyCourses();
+                if (demoMode) {
+                    // Demo join course
+                    showToast(`Demo: Joined course with code ${courseCode}`, 'success');
+                    document.getElementById('courseCodeInput').value = '';
+                    loadMyCourses();
+                } else {
+                    await joinCourse(courseCode);
+                    document.getElementById('courseCodeInput').value = '';
+                    loadMyCourses();
+                }
             } catch (error) {
                 // Error already shown in joinCourse function
             }
         }
-        
+
         async function joinCourse(courseCode) {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/courses/join`, {
@@ -1692,7 +1918,7 @@
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json();
+                    const error = await response.json().catch(() => ({ detail: 'Failed to join course' }));
                     throw new Error(error.detail || 'Failed to join course');
                 }
                 
@@ -1701,16 +1927,16 @@
                 return course;
                 
             } catch (error) {
-                console.error('Failed to join course:', error);
+                console.error('❌ Failed to join course:', error);
                 showToast(`Failed to join course: ${error.message}`, 'error');
                 throw error;
             }
         }
-        
+
         // ====================================================================
         // FILE UPLOAD & PROCESSING
         // ====================================================================
-        
+
         function selectFile(file) {
             hideMessages();
             
@@ -1729,7 +1955,7 @@
             showFilePreview(file);
             showToast('File selected! Click "Process Syllabus" to analyze it.', 'success');
         }
-        
+
         function validateFile(file) {
             const maxSize = 10 * 1024 * 1024; // 10MB
             const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -1756,7 +1982,7 @@
             
             return { valid: true, message: 'File validation passed!' };
         }
-        
+
         function showFilePreview(file) {
             const fileName = document.getElementById('previewFileName');
             const fileSize = document.getElementById('previewFileSize');
@@ -1780,7 +2006,7 @@
             document.getElementById('filePreview').style.display = 'block';
             document.getElementById('eventsSection').style.display = 'none';
         }
-        
+
         function removeSelectedFile() {
             selectedFile = null;
             document.getElementById('filePreview').style.display = 'none';
@@ -1788,7 +2014,7 @@
             hideAllProcessingElements();
             showToast('File removed. You can select a new file.', 'info');
         }
-        
+
         async function processFile() {
             if (!selectedFile) {
                 showToast('No file selected!', 'error');
@@ -1806,15 +2032,37 @@
             
             try {
                 showProgress();
-                await processSyllabusWithBackend();
+                
+                if (demoMode) {
+                    await processSyllabusDemo();
+                } else {
+                    await processSyllabusWithBackend();
+                }
             } catch (error) {
-                console.error('Processing error:', error);
+                console.error('❌ Processing error:', error);
                 showToast(`Error processing file: ${error.message}`, 'error');
             } finally {
                 resetProcessButton();
             }
         }
-        
+
+        async function processSyllabusDemo() {
+            updateProgress(25, 'Extracting text...', 'Reading document content');
+            const text = await extractText(selectedFile);
+            
+            updateProgress(75, 'Analyzing content...', 'Finding dates and events');
+            await sleep(2000); // Simulate processing time
+            
+            const events = generateDemoEvents();
+            
+            updateProgress(100, 'Complete!', `Found ${events.length} events`);
+            
+            setTimeout(() => {
+                hideAllProcessingElements();
+                displayEvents(events);
+            }, 1500);
+        }
+
         async function processSyllabusWithBackend() {
             try {
                 updateProgress(10, 'Uploading to server...', 'Sending your syllabus for analysis');
@@ -1831,21 +2079,12 @@
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json();
+                    const error = await response.json().catch(() => ({ detail: 'Failed to process syllabus' }));
                     throw new Error(error.detail || 'Failed to process syllabus');
                 }
                 
-                updateProgress(50, 'AI analyzing syllabus...', 'Extracting dates and events');
-                
-                // For now, since the backend might not fully implement this yet,
-                // we'll fall back to local processing
-                await sleep(1000);
-                
-                updateProgress(75, 'Extracting text...', 'Reading document content');
-                const text = await extractText(selectedFile);
-                
-                updateProgress(90, 'Parsing events...', 'Finding important dates');
-                const events = await extractEventsLocally(text);
+                updateProgress(75, 'AI analyzing syllabus...', 'Extracting dates and events');
+                const events = await response.json();
                 
                 updateProgress(100, 'Complete!', `Found ${events.length} events`);
                 
@@ -1855,7 +2094,7 @@
                 }, 1500);
                 
             } catch (error) {
-                console.error('Backend processing failed, trying local processing:', error);
+                console.error('❌ Backend processing failed, trying local processing:', error);
                 
                 // Fallback to local processing
                 updateProgress(30, 'Using local processing...', 'Extracting text from document');
@@ -1872,12 +2111,39 @@
                 }, 1500);
             }
         }
-        
+
+        function generateDemoEvents() {
+            const today = new Date();
+            return [
+                {
+                    title: 'Midterm Exam',
+                    date: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    time: '10:00',
+                    category: 'Exam',
+                    location: 'Classroom 101'
+                },
+                {
+                    title: 'Assignment 1 Due',
+                    date: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    time: '23:59',
+                    category: 'HW',
+                    location: null
+                },
+                {
+                    title: 'Group Project Presentation',
+                    date: new Date(today.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+                    time: '14:00',
+                    category: 'Project',
+                    location: 'Conference Room A'
+                }
+            ];
+        }
+
         function showProgress() {
             document.getElementById('progressContainer').style.display = 'block';
             updateProgress(0, 'Starting...', 'Preparing to process your syllabus');
         }
-        
+
         function updateProgress(percent, status, substatus) {
             const angle = (percent / 100) * 360;
             document.getElementById('progressCircle').style.background = `conic-gradient(var(--accent-primary) ${angle}deg, var(--medium-gray) ${angle}deg)`;
@@ -1885,21 +2151,21 @@
             document.getElementById('progressStatus').textContent = status;
             document.getElementById('progressSubstatus').textContent = substatus;
         }
-        
+
         function hideAllProcessingElements() {
             document.getElementById('progressContainer').style.display = 'none';
         }
-        
+
         function resetProcessButton() {
             const processBtn = document.getElementById('processBtn');
             processBtn.disabled = false;
             processBtn.textContent = '🚀 Process Syllabus';
         }
-        
+
         // ====================================================================
         // TEXT EXTRACTION
         // ====================================================================
-        
+
         async function extractText(file) {
             if (file.type.includes('pdf')) {
                 return await extractPDFText(file);
@@ -1909,8 +2175,12 @@
                 throw new Error('Unsupported file format. Please use PDF or .docx files.');
             }
         }
-        
+
         async function extractPDFText(file) {
+            if (typeof pdfjsLib === 'undefined') {
+                throw new Error('PDF.js library not loaded');
+            }
+            
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
             let text = '';
@@ -1923,7 +2193,7 @@
             
             return text;
         }
-        
+
         async function extractWordText(file) {
             try {
                 if (typeof mammoth === 'undefined') {
@@ -1939,19 +2209,16 @@
                 
                 return result.value;
             } catch (error) {
-                console.error('Error extracting Word document:', error);
+                console.error('❌ Error extracting Word document:', error);
                 throw new Error('Failed to extract text from Word document. Please try converting to PDF or ensure the file is a valid .docx file.');
             }
         }
-        
+
         // ====================================================================
         // EVENT EXTRACTION (Local Fallback)
         // ====================================================================
-        
+
         async function extractEventsLocally(text) {
-            // This is a simplified local extraction for demo purposes
-            // In the real implementation, this would be handled by the backend
-            
             const events = [];
             const lines = text.split('\n');
             
@@ -1973,30 +2240,16 @@
             
             // Add some demo events if nothing found
             if (events.length === 0) {
-                const today = new Date();
-                events.push({
-                    title: 'Midterm Exam',
-                    date: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    time: '10:00',
-                    category: 'Exam',
-                    location: 'Classroom 101'
-                });
-                events.push({
-                    title: 'Assignment 1 Due',
-                    date: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    time: '23:59',
-                    category: 'HW',
-                    location: null
-                });
+                return generateDemoEvents();
             }
             
             return events;
         }
-        
+
         // ====================================================================
         // EVENT DISPLAY
         // ====================================================================
-        
+
         function displayEvents(events) {
             extractedEvents = events;
             const eventsList = document.getElementById('eventsList');
@@ -2040,14 +2293,14 @@
                 showToast(`Found ${events.length} events! Review them and add to your calendar when ready.`, 'success');
             }
         }
-        
+
         // ====================================================================
         // GOOGLE CALENDAR INTEGRATION
         // ====================================================================
-        
+
         async function addToGoogleCalendar() {
-            if (!isSignedIn) {
-                showToast('Please sign in with Google first to add events to your calendar', 'error');
+            if (!googleApiReady) {
+                showToast('Google Calendar is not available. Please refresh the page and try again.', 'error');
                 return;
             }
             
@@ -2055,8 +2308,15 @@
                 showToast('No events to add to calendar', 'error');
                 return;
             }
-            
+
             try {
+                // Check if we have calendar access
+                const token = gapi.client.getToken();
+                if (!token || !token.access_token) {
+                    // Request calendar access
+                    await requestCalendarAccess();
+                }
+                
                 let successCount = 0;
                 
                 for (const event of extractedEvents) {
@@ -2068,11 +2328,38 @@
                 showToast(`Successfully added ${successCount} events to Google Calendar!`, 'success');
                 
             } catch (error) {
-                console.error('Failed to add events to calendar:', error);
+                console.error('❌ Failed to add events to calendar:', error);
                 showToast(`Failed to add events to calendar: ${error.message}`, 'error');
             }
         }
-        
+
+        async function requestCalendarAccess() {
+            return new Promise((resolve, reject) => {
+                try {
+                    if (!google || !google.accounts || !google.accounts.oauth2) {
+                        throw new Error('Google OAuth2 not available');
+                    }
+
+                    const tokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: GOOGLE_CLIENT_ID,
+                        scope: 'https://www.googleapis.com/auth/calendar',
+                        callback: (response) => {
+                            if (response.error) {
+                                reject(new Error(response.error));
+                                return;
+                            }
+                            gapi.client.setToken({ access_token: response.access_token });
+                            resolve();
+                        }
+                    });
+
+                    tokenClient.requestAccessToken({ prompt: 'consent' });
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
         async function createCalendarEvent(event) {
             let startDateTime, endDateTime;
             
@@ -2117,11 +2404,11 @@
             
             return response.result;
         }
-        
+
         // ====================================================================
         // EVENT EDITING (Simplified)
         // ====================================================================
-        
+
         function editEvent(index) {
             const event = extractedEvents[index];
             const newTitle = prompt('Edit event title:', event.title);
@@ -2132,11 +2419,11 @@
                 showToast('Event updated!', 'success');
             }
         }
-        
+
         // ====================================================================
         // UTILITY FUNCTIONS
         // ====================================================================
-        
+
         function formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
             const k = 1024;
@@ -2144,7 +2431,7 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
-        
+
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('en-US', { 
@@ -2154,7 +2441,7 @@
                 day: 'numeric' 
             });
         }
-        
+
         function formatTime(timeString) {
             if (!timeString) return '';
             
@@ -2165,7 +2452,7 @@
             
             return `${displayHour}:${minutes} ${ampm}`;
         }
-        
+
         function showToast(message, type = 'info') {
             const existingToasts = document.querySelectorAll('.toast');
             existingToasts.forEach(toast => toast.remove());
@@ -2183,27 +2470,43 @@
                 setTimeout(() => toast.remove(), 300);
             }, 4000);
         }
-        
+
         function hideMessages() {
             document.getElementById('errorMessage').style.display = 'none';
             document.getElementById('successMessage').style.display = 'none';
         }
-        
+
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
-        
+
+        // ====================================================================
+        // EVENT LISTENERS
+        // ====================================================================
+
         // Close modals on escape key
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 closeCreateCourseModal();
             }
         });
-        
+
         // Close modals when clicking outside
         document.addEventListener('click', (event) => {
             if (event.target.classList.contains('modal-overlay')) {
                 closeCreateCourseModal();
+            }
+        });
+
+        // Handle course code input
+        document.addEventListener('DOMContentLoaded', function() {
+            const courseCodeInput = document.getElementById('courseCodeInput');
+            if (courseCodeInput) {
+                courseCodeInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        handleJoinCourse();
+                    }
+                });
             }
         });
     </script>
