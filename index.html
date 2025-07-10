@@ -1289,35 +1289,42 @@
         }
 
         async function initializeGoogleAPIWithGIS () {
-        try {
-            console.log('🔧 Starting Google API initialization with GIS…');
+            try {
+                console.log('🔧 Starting Google API initialization with GIS…');
 
-            /* 1️⃣  load gapi.client ------------------------------------------------ */
-            await new Promise((resolve, reject) => {
-            gapi.load('client', {
-                callback () {
-                console.log('✅ gapi client module loaded');
-                resolve();
-                },
-                onerror (err) {
-                console.error('❌ gapi load failed', err);
-                reject(new Error('Failed to load Google Client module'));
-                }
-            });
-            });
-
-            /* 2️⃣  init client ----------------------------------------------------- */
-            await gapi.client.init({
-            apiKey: GOOGLE_API_KEY,
-            discoveryDocs: DISCOVERY_DOCS
+                /* 1️⃣ load gapi.client */
+                await new Promise((resolve, reject) => {
+                    gapi.load('client', {
+                        callback () {
+                        console.log('✅ gapi client module loaded');
+                        resolve();
+                    },
+                    onerror (err) {
+                        console.error('❌ gapi load failed', err);
+                        reject(new Error('Failed to load Google Client module'));
+                    }
+                });
             });
 
-            console.log('🎉 Google API + GIS ready');
-        } catch (err) {
-            console.error('❌ Google API init failed:', err);
-            enableFallbackMode();        // your existing retry/UX helper
+                /* 2️⃣ init client */
+                await gapi.client.init({
+                    apiKey: GOOGLE_API_KEY,
+                    discoveryDocs: DISCOVERY_DOCS
+                });
+
+                /* 3️⃣ wait for GIS, then build tokenClient */
+                await waitForGIS();
+                createTokenClient();
+
+                // ✅ DO NOT change innerHTML or textContent here!
+                // The official GIS iframe has been rendered by renderButton()
+                console.log('🎉 Google API + GIS ready');
+            }   catch (err) {
+                console.error('❌ Google API init failed:', err);
+                enableFallbackMode();
+            }
         }
-        }
+
         
         async function waitForGIS() {
             let attempts = 0;
@@ -1340,15 +1347,13 @@
         }
         
         function enableFallbackMode() {
-            console.log('🔄 Enabling fallback mode');
             const mainSigninBtn = document.getElementById('mainSignInBtn');
             if (mainSigninBtn) {
-                mainSigninBtn.innerHTML = '<button>Try Again</button>';
+                mainSigninBtn.innerHTML = '<button onclick="location.reload()">Try Again</button>';
             }
             showToast('Google API failed to load. Please refresh.', 'warning');
         }
 
-        
         function signOut() {
             try {
                 // Clear backend auth
