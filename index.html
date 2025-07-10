@@ -3,15 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SyllabAI - Smart Syllabus Management Platform</title>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:; frame-src 'self' https: http:; connect-src 'self' https: http: ws: wss:; img-src 'self' data: blob: https: http:; style-src 'self' 'unsafe-inline' https: http:; font-src 'self' data: https: http:; object-src 'none'; base-uri 'self';">
-    
-    <!-- External Libraries -->
+    <title>SyllabAI – Smart Syllabus Management Platform</title>
+
+    <!-- Strict Content-Security-Policy (unchanged) -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:;
+                   script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:;
+                   frame-src 'self' https: http:;
+                   connect-src 'self' https: http: ws: wss:;
+                   img-src   'self' data: blob: https: http:;
+                   style-src 'self' 'unsafe-inline' https: http:;
+                   font-src  'self' data: https: http:;
+                   object-src 'none';
+                   base-uri 'self';">
+
+    <!-- ---------- EARLY stub so Google can always find the callback ---------- -->
+    <script>
+      function onGoogleAPILoad() {
+        if (typeof initializeGoogleAPIWithGIS === 'function') {
+          initializeGoogleAPIWithGIS();
+        } else {
+          window.addEventListener('DOMContentLoaded', initializeGoogleAPIWithGIS);
+        }
+      }
+    </script>
+
+    <!-- Google client-library script – keep defer, drop async -->
+    <script defer
+            src="https://apis.google.com/js/api.js"
+            onload="onGoogleAPILoad()"></script>
+
+    <!-- Other external libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-    <script async defer src="https://apis.google.com/js/api.js" onload="onGoogleAPILoad()"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    
+
     <style>
         /* Import typewriter-style fonts */
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
