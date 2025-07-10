@@ -37,6 +37,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" defer onload="onGoogleAPILoad()"></script>
 
     <style>
         /* Import typewriter-style fonts */
@@ -1005,9 +1006,7 @@
                         📚 <strong>Professors:</strong> Create courses, upload syllabi, and automatically extract assignment deadlines<br>
                         🎓 <strong>Students:</strong> Join courses and sync all your academic events to Google Calendar
                     </p>
-                    <button id="mainSignInBtn" onclick="signInWithGoogle()" disabled class="main-signin-btn">
-                        🔐 Loading Google API...
-                    </button>
+                    <div id="mainSignInBtn" style="display:inline-block;"></div>
                 </div>
             </div>
 
@@ -1178,7 +1177,7 @@
         const GOOGLE_CLIENT_ID = '208074157418-pr4ks1ronvggb2blrqoomd8hhutkmco1.apps.googleusercontent.com';
         const GOOGLE_API_KEY = 'AIzaSyBgwVJrwWRTIWzi4dKTI5Eq13JOTF0Zbdg';
         const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'];
-        const SCOPES = 'https://www.googleapis.com/auth/calendar profile email';
+        const SCOPES = 'openid email profile https://www.googleapis.com/auth/calendar';
         
         // PDF.js worker configuration
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -1190,60 +1189,77 @@
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
         });
+        let googleIdTokenJWT = null;
         
         function initializeApp() {
             console.log('🚀 Initializing SyllabAI...');
             
             // Set up file upload handlers
             setupFileUpload();
+            initGoogleIdentity();   // <-- NEW
             
             // Show sign-in section initially
             showSignInSection();
             
             console.log('✅ App initialized');
         }
-        
-        function setupFileUpload() {
-            const uploadSection = document.getElementById('uploadSection');
-            const fileInput = document.getElementById('fileInput');
             
-            // Drag and drop handlers
-            uploadSection.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadSection.classList.add('dragover');
-            });
-            
-            uploadSection.addEventListener('dragleave', () => {
-                uploadSection.classList.remove('dragover');
-            });
-            
-            uploadSection.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadSection.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length > 0) {
-                    selectFile(files[0]);
-                }
-            });
-            
-            // File input handler
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length > 0) {
-                    selectFile(e.target.files[0]);
-                }
+        // ───────────────────────────────────────────────────────────
+        //  1.  Render “Sign-in with Google” button (ID-token flow)
+        // ───────────────────────────────────────────────────────────
+        function initGoogleIdentity() {
+        google.accounts.id.initialize({
+            client_id: GOOGLE_CLIENT_ID,
+            callback: handleCredentialResponse,          // ID-token callback
+        });
+
+        google.accounts.id.renderButton(
+            document.getElementById('mainSignInBtn'),
+            { theme: 'outline', size: 'large', text: 'signin_with' }
+        );
+        }
+
+        // ───────────────────────────────────────────────────────────
+        //  2.  ID-token received  →  authenticate with backend
+        // ───────────────────────────────────────────────────────────
+        function handleCredentialResponse(res) {
+        googleIdTokenJWT = res.credential;             // JWT from GIS
+        signInWithBackend(googleIdTokenJWT)            // 🔒 issue backend JWT
+            .then(() => {
+            // 3.  Immediately request Calendar-scope OAuth token
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+            })
+            .catch(err => {
+            console.error(err);
+            showToast('Authentication failed', 'error');
             });
         }
-        
-        function handleUploadKeydown(event) {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                document.getElementById('fileInput').click();
-            }
+
+        // ───────────────────────────────────────────────────────────
+        //  4.  OAuth access-token callback (Calendar scope)
+        // ───────────────────────────────────────────────────────────
+        function onAccessTokenResponse(resp) {
+        if (resp.error) { showToast(resp.error, 'error'); return; }
+        gapi.client.setToken({ access_token: resp.access_token });
+        isSignedIn = true;
+        showToast('Google Calendar connected!', 'success');
         }
-        
-        // ====================================================================
+
+        // ───────────────────────────────────────────────────────────
+        //  5.  Create tokenClient after gapi is ready
+        //      (call createTokenClient() from onGoogleAPILoad or similar)
+        // ───────────────────────────────────────────────────────────
+        function createTokenClient() {
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: GOOGLE_CLIENT_ID,
+            scope: SCOPES,                               // must include Calendar scope
+            callback: onAccessTokenResponse,
+        });
+        }
+
+        /* ====================================================================
         // GOOGLE API INTEGRATION
-        // ====================================================================
+        ==================================================================== */
         
         function onGoogleAPILoad() {
             console.log('Google API script loaded');
@@ -1348,41 +1364,6 @@
             } catch (error) {
                 console.error('Sign-in failed:', error);
                 showToast('Google sign-in failed. Please try again.', 'error');
-            }
-        }
-        
-        async function handleGoogleSignInSuccess(tokenResponse) {
-            try {
-                console.log('🔐 Google sign-in successful, authenticating with backend...');
-                
-                // Use the access token to get user info from Google
-                const userInfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-                    headers: {
-                        'Authorization': `Bearer ${tokenResponse.access_token}`
-                    }
-                });
-                
-                if (!userInfoResponse.ok) {
-                    throw new Error('Failed to get Google user info');
-                }
-                
-                const googleUser = await userInfoResponse.json();
-                console.log('Google user info:', googleUser);
-                
-                // Create a synthetic ID token for our backend
-                const mockIdToken = btoa(JSON.stringify({
-                    email: googleUser.email,
-                    name: googleUser.name,
-                    picture: googleUser.picture,
-                    sub: googleUser.id
-                }));
-                
-                // Authenticate with backend
-                await signInWithBackend(mockIdToken);
-                
-            } catch (error) {
-                console.error('Failed to handle Google sign-in:', error);
-                showToast(`Authentication failed: ${error.message}`, 'error');
             }
         }
         
