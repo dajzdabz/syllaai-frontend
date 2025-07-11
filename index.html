@@ -1781,36 +1781,48 @@
             } catch (error) {
                 console.error('❌ Student syllabus processing failed:', error);
                 
-                // Fallback: Show a message about creating a generic course
-                showToast('Processing failed. Creating a personal course for your events...', 'info');
-                
-                // Create a temporary course for the student
-                selectedCourse = {
-                    id: 'temp-' + Date.now(),
-                    title: 'My Personal Course',
-                    crn: 'SELF'
-                };
-                
-                // Mock some events for demonstration
-                extractedEvents = [
-                    {
-                        title: 'Midterm Exam',
-                        start_ts: '2025-08-15T10:00:00',
-                        end_ts: '2025-08-15T12:00:00',
-                        category: 'Exam',
-                        location: 'TBD'
-                    },
-                    {
-                        title: 'Final Project Due',
-                        start_ts: '2025-12-10T23:59:00',
-                        end_ts: '2025-12-11T00:00:00',
-                        category: 'Project',
-                        location: 'Online'
-                    }
-                ];
-                
-                showToast('Created sample events. Please review and edit as needed.', 'info');
-                showStudentEventEditor();
+                // Check if it's specifically a "no events found" error
+                if (error.message.includes('No events with dates found')) {
+                    showToast('No dates found in syllabus. Creating demo events for you to customize...', 'info');
+                    
+                    // Create a temporary course for the student
+                    selectedCourse = {
+                        id: 'temp-' + Date.now(),
+                        title: 'My Personal Course',
+                        crn: 'SELF'
+                    };
+                    
+                    // Mock some events for demonstration
+                    extractedEvents = [
+                        {
+                            title: 'Midterm Exam',
+                            start_ts: '2025-08-15T10:00:00',
+                            end_ts: '2025-08-15T12:00:00',
+                            category: 'Exam',
+                            location: 'TBD'
+                        },
+                        {
+                            title: 'Final Project Due',
+                            start_ts: '2025-12-10T23:59:00',
+                            end_ts: '2025-12-11T00:00:00',
+                            category: 'Project',
+                            location: 'Online'
+                        },
+                        {
+                            title: 'Assignment 1 Due',
+                            start_ts: '2025-07-20T23:59:00',
+                            end_ts: '2025-07-21T00:00:00',
+                            category: 'HW',
+                            location: 'Online'
+                        }
+                    ];
+                    
+                    showToast('Created demo events. Edit the dates and details as needed!', 'success');
+                    showStudentEventEditor();
+                } else {
+                    // Other errors - show the actual error message
+                    showToast(`Upload failed: ${error.message}`, 'error');
+                }
             }
         }
 
