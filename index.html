@@ -5,53 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SyllabAI – Smart Syllabus Management Platform</title>
 
-    <!-- Content Security Policy - Relaxed for development -->
-    <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:;
-                   script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http: data: blob:;
-                   frame-src 'self' https: http:;
-                   connect-src 'self' https: http: ws: wss:;
-                   img-src 'self' data: blob: https: http:;
-                   style-src 'self' 'unsafe-inline' https: http:;
-                   font-src 'self' data: https: http:;
-                   object-src 'none';
-                   base-uri 'self';">
-
-    <!-- External Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
-    
     <!-- Google APIs -->
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
 
     <style>
-        /* Import typewriter-style fonts */
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+        /* Import fonts */
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
         
         :root {
-            /* Minimalist Color Palette */
-            --primary-black: #1a1a1a;
-            --secondary-black: #2d2d2d;
-            --light-gray: #f5f5f5;
-            --medium-gray: #e0e0e0;
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --secondary-green: #059669;
+            --secondary-green-dark: #047857;
+            --accent-orange: #ea580c;
+            --accent-red: #dc2626;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
             --white: #ffffff;
             
-            /* Accent Colors - Bright bursts */
-            --accent-primary: #ff6b35;    /* Vibrant orange */
-            --accent-secondary: #00d4aa;  /* Bright teal */
-            --accent-warning: #ffd23f;    /* Bright yellow */
-            --accent-error: #ff3333;      /* Bright red */
+            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             
-            /* Typography */
-            --font-mono: 'JetBrains Mono', 'Space Mono', 'Courier New', monospace;
-            --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            
-            /* Material Design Shadows */
-            --shadow-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            --shadow-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
-            --shadow-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
-            --shadow-4: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
         }
 
         * {
@@ -61,151 +48,126 @@
         }
 
         body {
-            font-family: var(--font-mono);
-            background: var(--white);
-            color: var(--primary-black);
+            font-family: var(--font-sans);
+            background: var(--gray-50);
+            color: var(--gray-900);
             line-height: 1.6;
-            letter-spacing: 0.5px;
-            min-height: 100vh;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: var(--white);
             min-height: 100vh;
+            background: var(--white);
         }
 
-        /* Header Styles */
+        /* Header */
         .header {
-            background: linear-gradient(135deg, var(--primary-black), var(--secondary-black));
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
             color: var(--white);
-            padding: 20px 40px;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow-3);
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 32px;
+            box-shadow: var(--shadow-lg);
         }
 
         .logo {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--accent-primary);
+            font-family: var(--font-mono);
             text-decoration: none;
-            letter-spacing: 1px;
+            color: var(--white);
             cursor: pointer;
         }
 
-        .user-menu {
+        .user-info {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 1rem;
         }
 
         .user-info-header {
-            display: flex;
+            display: none;
             align-items: center;
-            gap: 12px;
-            padding: 8px 16px;
+            gap: 0.75rem;
+            padding: 0.5rem 1rem;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            font-size: 0.9rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
         }
 
         .sign-out-btn {
-            background: var(--accent-error);
+            background: var(--accent-red);
             color: var(--white);
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
-            font-weight: 600;
+            font-weight: 500;
+            transition: all 0.2s;
         }
 
         .sign-out-btn:hover {
-            background: #cc0000;
-            transform: translateY(-2px);
+            background: #b91c1c;
         }
 
         /* Main Content */
         .main-content {
-            padding: 40px;
+            padding: 2rem;
         }
 
         /* Sign-in Section */
         .sign-in-section {
             text-align: center;
-            padding: 60px 40px;
-            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(0, 212, 170, 0.1));
-            border-radius: 12px;
-            margin-bottom: 40px;
-            box-shadow: var(--shadow-2);
+            padding: 4rem 2rem;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .sign-in-section h1 {
             font-size: 3rem;
-            margin-bottom: 16px;
             font-weight: 700;
-            letter-spacing: 2px;
-            position: relative;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .sign-in-section h1::after {
-            content: '_';
-            color: var(--accent-primary);
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+        .sign-in-section p {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+            margin-bottom: 2rem;
         }
 
         .google-signin-container {
             display: flex;
             justify-content: center;
-            margin-top: 24px;
+            margin-top: 2rem;
         }
 
         .custom-google-btn {
             background: #4285f4;
             color: white;
             border: none;
-            padding: 20px 40px;
-            border-radius: 8px;
-            font-size: 1.2rem;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            box-shadow: var(--shadow-2);
+            font-weight: 500;
             display: none;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-md);
         }
 
         .custom-google-btn:hover {
             background: #3367d6;
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-3);
+            box-shadow: var(--shadow-lg);
         }
 
-        .custom-google-btn:disabled {
-            background: var(--medium-gray);
-            color: var(--secondary-black);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Dashboard Styles */
+        /* Dashboard */
         .dashboard {
             display: none;
         }
@@ -215,548 +177,364 @@
         }
 
         .dashboard-header {
-            margin-bottom: 40px;
             text-align: center;
+            margin-bottom: 3rem;
         }
 
         .dashboard-title {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--primary-black);
-            margin-bottom: 12px;
-            letter-spacing: 1px;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
         }
 
         .dashboard-subtitle {
-            font-size: 1.1rem;
-            color: var(--secondary-black);
-            font-family: var(--font-system);
+            font-size: 1.125rem;
+            color: var(--gray-600);
         }
 
-        .course-actions {
+        /* Action Buttons */
+        .action-buttons {
             display: flex;
-            gap: 16px;
-            margin-bottom: 32px;
+            gap: 1rem;
             justify-content: center;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
         }
 
-        .action-btn {
-            background: var(--accent-primary);
-            color: var(--white);
-            border: none;
-            padding: 16px 32px;
-            border-radius: 8px;
-            font-size: 1rem;
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.875rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-blue-dark);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-50);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-success {
+            background: var(--secondary-green);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background: var(--secondary-green-dark);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Course Search Section */
+        .course-search-section {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .course-search-section h3 {
+            font-size: 1.25rem;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            box-shadow: var(--shadow-2);
+            margin-bottom: 1rem;
+            color: var(--gray-900);
         }
 
-        .action-btn:hover {
-            background: #e55a2b;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-3);
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 1rem;
+            align-items: end;
         }
 
-        .action-btn.secondary {
-            background: var(--accent-secondary);
-        }
-
-        .action-btn.secondary:hover {
-            background: #00b894;
-        }
-
-        /* Join Course Section */
-        .join-course-section {
-            background: var(--light-gray);
-            border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .join-input {
+        .form-group {
             display: flex;
-            gap: 12px;
-            max-width: 400px;
-            margin: 16px auto 0;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
-        .course-code-input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 1px solid var(--medium-gray);
-            border-radius: 6px;
-            font-size: 1rem;
-            font-family: var(--font-mono);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .form-group label {
+            font-weight: 500;
+            color: var(--gray-700);
+            font-size: 0.875rem;
         }
 
-        .join-btn {
-            background: var(--accent-secondary);
-            color: var(--white);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
-            font-weight: 600;
-            text-transform: uppercase;
+        .form-input {
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            background: var(--white);
         }
 
-        .join-btn:hover {
-            background: #00b894;
-            transform: translateY(-2px);
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
+        }
+
+        .form-select {
+            padding: 0.75rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            background: var(--white);
+            transition: all 0.2s;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgb(37 99 235 / 0.1);
         }
 
         /* Course Grid */
         .courses-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-top: 24px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
         .course-card {
             background: var(--white);
-            border: 1px solid var(--medium-gray);
-            border-radius: 12px;
-            padding: 24px;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-1);
-            position: relative;
+            transition: all 0.2s;
+            box-shadow: var(--shadow-sm);
         }
 
         .course-card:hover {
-            box-shadow: var(--shadow-3);
-            transform: translateY(-4px);
-            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
         }
 
         .course-code {
-            font-size: 1.3rem;
+            font-size: 1.125rem;
             font-weight: 700;
-            color: var(--primary-black);
+            color: var(--primary-blue);
             font-family: var(--font-mono);
-            margin-bottom: 8px;
+        }
+
+        .course-semester {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border-radius: 0.375rem;
+            font-weight: 500;
         }
 
         .course-title {
-            font-size: 1.1rem;
-            color: var(--secondary-black);
-            margin-bottom: 16px;
-            font-family: var(--font-system);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
         }
 
-        .course-description {
-            font-size: 0.9rem;
-            color: var(--secondary-black);
-            margin-bottom: 16px;
-            font-family: var(--font-system);
-            font-style: italic;
+        .course-school {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 1rem;
         }
 
         .course-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
-            color: var(--secondary-black);
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--medium-gray);
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            border-top: 1px solid var(--gray-100);
+            padding-top: 1rem;
         }
 
         /* Upload Section */
         .upload-section {
             background: var(--white);
-            border: 2px dashed var(--medium-gray);
-            border-radius: 8px;
-            padding: 60px 40px;
+            border: 2px dashed var(--gray-300);
+            border-radius: 0.75rem;
+            padding: 3rem 2rem;
             text-align: center;
-            margin-bottom: 40px;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-1);
-        }
-
-        .upload-section:hover {
-            border-color: var(--accent-primary);
-            box-shadow: var(--shadow-2);
-            transform: translateY(-2px);
+            margin: 2rem 0;
+            transition: all 0.2s;
+            display: none;
         }
 
         .upload-section.dragover {
-            border-color: var(--accent-primary);
-            background: rgba(255, 107, 53, 0.05);
-            box-shadow: var(--shadow-3);
-        }
-
-        .upload-icon {
-            font-size: 4rem;
-            margin-bottom: 24px;
-            color: var(--secondary-black);
+            border-color: var(--primary-blue);
+            background: rgb(37 99 235 / 0.05);
         }
 
         .upload-section h3 {
-            font-size: 1.4rem;
-            margin-bottom: 12px;
+            font-size: 1.25rem;
             font-weight: 600;
-            color: var(--primary-black);
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
         }
 
         .upload-section p {
-            color: var(--secondary-black);
-            margin-bottom: 24px;
-            font-family: var(--font-system);
-        }
-
-        .upload-btn {
-            background: var(--accent-primary);
-            color: var(--white);
-            border: none;
-            padding: 16px 32px;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: var(--shadow-2);
-        }
-
-        .upload-btn:hover {
-            background: #e55a2b;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-3);
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
         }
 
         .file-input {
             display: none;
         }
 
-        /* File Preview */
-        .file-preview {
+        /* Event Editor */
+        .event-editor {
             background: var(--white);
-            border: 1px solid var(--medium-gray);
-            border-radius: 8px;
-            padding: 32px;
-            margin: 32px 0;
-            text-align: center;
-            box-shadow: var(--shadow-2);
-            animation: slideIn 0.3s ease;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: none;
+            box-shadow: var(--shadow-sm);
         }
 
-        .file-preview h3 {
-            color: var(--primary-black);
-            margin-bottom: 24px;
-            font-size: 1.3rem;
+        .event-editor h3 {
+            font-size: 1.25rem;
             font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--gray-900);
         }
 
-        .file-preview-card {
-            background: var(--light-gray);
-            border-radius: 8px;
-            padding: 24px;
-            max-width: 500px;
-            margin: 0 auto;
-            box-shadow: var(--shadow-1);
+        .events-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
         }
 
-        .file-info {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 24px;
+        .events-table th,
+        .events-table td {
+            padding: 0.75rem;
             text-align: left;
+            border-bottom: 1px solid var(--gray-200);
         }
 
-        .file-icon {
-            font-size: 3rem;
-            width: 80px;
-            height: 80px;
-            background: var(--white);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-1);
-        }
-
-        .file-details h4 {
-            color: var(--primary-black);
-            margin: 0 0 8px 0;
-            font-size: 1.1rem;
+        .events-table th {
+            background: var(--gray-50);
             font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.875rem;
         }
 
-        .file-details p {
-            color: var(--secondary-black);
-            margin: 0 0 4px 0;
-            font-size: 0.9rem;
-            font-family: var(--font-system);
+        .events-table td {
+            font-size: 0.875rem;
         }
 
-        .file-actions {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .events-table input,
+        .events-table select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
         }
 
-        .process-btn {
-            background: var(--accent-secondary);
+        .events-table input:focus,
+        .events-table select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+
+        .delete-event-btn {
+            background: var(--accent-red);
             color: var(--white);
             border: none;
-            padding: 16px 32px;
-            border-radius: 4px;
-            font-size: 1rem;
-            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            box-shadow: var(--shadow-2);
-        }
-
-        .process-btn:hover {
-            background: #00b894;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-3);
-        }
-
-        .process-btn:disabled {
-            background: var(--medium-gray);
-            color: var(--secondary-black);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: var(--shadow-1);
-        }
-
-        .remove-btn {
-            background: var(--white);
-            color: var(--secondary-black);
-            border: 1px solid var(--medium-gray);
-            padding: 16px 24px;
-            border-radius: 4px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
-            box-shadow: var(--shadow-1);
-        }
-
-        .remove-btn:hover {
-            background: var(--light-gray);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-2);
         }
 
         /* Progress */
         .progress-container {
-            display: none;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 2rem;
             text-align: center;
-            padding: 40px;
-            background: var(--light-gray);
-            border-radius: 8px;
-            margin: 32px 0;
-            box-shadow: var(--shadow-1);
-        }
-
-        .progress-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: conic-gradient(var(--accent-primary) 0deg, var(--medium-gray) 0deg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            position: relative;
-            transition: background 0.3s ease;
-        }
-
-        .progress-circle::before {
-            content: '';
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: var(--white);
-            position: absolute;
-        }
-
-        .progress-text {
-            position: relative;
-            z-index: 1;
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary-black);
-        }
-
-        .progress-status {
-            font-size: 1rem;
-            color: var(--primary-black);
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .progress-substatus {
-            font-size: 0.9rem;
-            color: var(--secondary-black);
-            font-family: var(--font-system);
-        }
-
-        /* Events Section */
-        .events-section {
+            margin: 2rem 0;
             display: none;
-            margin-top: 40px;
+            box-shadow: var(--shadow-sm);
         }
 
-        .events-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--medium-gray);
-            flex-wrap: wrap;
-            gap: 16px;
+        .progress-spinner {
+            width: 3rem;
+            height: 3rem;
+            border: 3px solid var(--gray-200);
+            border-top: 3px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
         }
 
-        .events-header h2 {
-            color: var(--primary-black);
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: 1px;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .calendar-controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .add-to-calendar-btn {
-            background: var(--accent-secondary);
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
             color: var(--white);
-            border: none;
-            padding: 12px 20px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            box-shadow: var(--shadow-2);
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
         }
 
-        .add-to-calendar-btn:hover {
-            background: #00b894;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-3);
+        .toast.show {
+            transform: translateX(0);
         }
 
-        .add-to-calendar-btn:disabled {
-            background: var(--medium-gray);
-            color: var(--secondary-black);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: var(--shadow-1);
-        }
-
-        /* Event Items */
-        .event-item {
-            background: var(--white);
-            border: 1px solid var(--medium-gray);
-            border-radius: 8px;
-            padding: 24px;
-            margin-bottom: 16px;
-            transition: all 0.3s ease;
-            position: relative;
-            box-shadow: var(--shadow-1);
-        }
-
-        .event-item:hover {
-            box-shadow: var(--shadow-2);
-            transform: translateY(-2px);
-        }
-
-        .event-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--primary-black);
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-        }
-
-        .event-date {
-            color: var(--secondary-black);
-            font-size: 1rem;
-            margin-bottom: 12px;
-            font-family: var(--font-system);
-        }
-
-        .event-location {
-            color: var(--secondary-black);
-            font-size: 0.9rem;
-            margin: 8px 0;
-            font-style: italic;
-            font-family: var(--font-system);
-        }
-
-        .event-category {
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-family: var(--font-mono);
-        }
-
-        /* Category Colors */
-        .category-exam { background: var(--accent-error); color: var(--white); }
-        .category-hw { background: var(--accent-primary); color: var(--white); }
-        .category-project { background: var(--accent-secondary); color: var(--white); }
-        .category-class { background: var(--accent-warning); color: var(--primary-black); }
-        .category-other { background: var(--primary-black); color: var(--white); }
-
-        .edit-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: var(--white);
-            border: 1px solid var(--medium-gray);
-            border-radius: 4px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            color: var(--secondary-black);
-            transition: all 0.3s ease;
-            font-family: var(--font-mono);
-            box-shadow: var(--shadow-1);
-        }
-
-        .edit-btn:hover {
-            background: var(--light-gray);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-2);
-        }
+        .toast.success { background: var(--secondary-green); }
+        .toast.error { background: var(--accent-red); }
+        .toast.info { background: var(--primary-blue); }
+        .toast.warning { background: var(--accent-orange); color: var(--white); }
 
         /* Modals */
         .modal-overlay {
@@ -765,12 +543,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(26, 26, 26, 0.8);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 10000;
-            animation: fadeIn 0.2s ease;
         }
 
         .modal-overlay.show {
@@ -779,274 +556,112 @@
 
         .modal-content {
             background: var(--white);
-            border-radius: 12px;
-            padding: 40px;
+            border-radius: 0.75rem;
+            padding: 2rem;
             max-width: 500px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-4);
-            animation: slideUp 0.3s ease;
+            box-shadow: var(--shadow-xl);
         }
 
         .modal-header {
-            margin-bottom: 32px;
+            margin-bottom: 2rem;
             text-align: center;
         }
 
         .modal-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--primary-black);
-            margin-bottom: 8px;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
         }
 
         .modal-subtitle {
-            font-size: 1rem;
-            color: var(--secondary-black);
-            font-family: var(--font-system);
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .form-group label {
-            font-weight: 600;
-            color: var(--primary-black);
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 12px 16px;
-            border: 1px solid var(--medium-gray);
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: border-color 0.2s ease;
-            background: var(--white);
-            font-family: var(--font-system);
-            box-shadow: var(--shadow-1);
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent-primary);
-            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 80px;
+            color: var(--gray-600);
         }
 
         .modal-actions {
             display: flex;
-            gap: 16px;
+            gap: 1rem;
             justify-content: flex-end;
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid var(--medium-gray);
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-200);
         }
 
-        .modal-btn {
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-            font-family: var(--font-mono);
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .modal-btn.primary {
-            background: var(--accent-primary);
-            color: var(--white);
-            box-shadow: var(--shadow-2);
-        }
-
-        .modal-btn.primary:hover {
-            background: #e55a2b;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-3);
-        }
-
-        .modal-btn.secondary {
-            background: var(--white);
-            color: var(--secondary-black);
-            border: 1px solid var(--medium-gray);
-            box-shadow: var(--shadow-1);
-        }
-
-        .modal-btn.secondary:hover {
-            background: var(--light-gray);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-2);
-        }
-
-        /* Toast Notifications */
-        .toast {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            padding: 16px 24px;
-            border-radius: 8px;
-            color: var(--white);
-            font-weight: 600;
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            max-width: 350px;
-            box-shadow: var(--shadow-3);
-            font-family: var(--font-mono);
-            letter-spacing: 0.5px;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast.success { background: var(--accent-secondary); }
-        .toast.error { background: var(--accent-error); }
-        .toast.info { background: var(--accent-primary); }
-        .toast.warning { background: var(--accent-warning); color: var(--primary-black); }
-
-        /* Utility Classes */
-        .error { 
-            background: rgba(255, 51, 51, 0.1); 
-            color: var(--accent-error); 
-            padding: 16px; 
-            border-radius: 8px; 
-            margin: 16px 0; 
-            display: none; 
-            border: 1px solid var(--accent-error); 
-            font-family: var(--font-system); 
-        }
-        
-        .success { 
-            background: rgba(0, 212, 170, 0.1); 
-            color: var(--accent-secondary); 
-            padding: 16px; 
-            border-radius: 8px; 
-            margin: 16px 0; 
-            display: none; 
-            border: 1px solid var(--accent-secondary); 
-            font-family: var(--font-system); 
-        }
-
-        /* Animations */
-        @keyframes slideIn { 
-            from { opacity: 0; transform: translateY(-10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        
-        @keyframes fadeIn { 
-            from { opacity: 0; } 
-            to { opacity: 1; } 
-        }
-        
-        @keyframes slideUp { 
-            from { transform: translateY(30px); opacity: 0; } 
-            to { transform: translateY(0); opacity: 1; } 
-        }
-        
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
             .header {
-                padding: 16px 20px;
+                padding: 1rem;
                 flex-direction: column;
-                gap: 16px;
-                text-align: center;
+                gap: 1rem;
             }
 
             .main-content {
-                padding: 20px;
+                padding: 1rem;
+            }
+
+            .search-form {
+                grid-template-columns: 1fr;
             }
 
             .courses-grid {
                 grid-template-columns: 1fr;
             }
 
-            .course-actions {
+            .action-buttons {
                 flex-direction: column;
-                align-items: center;
-            }
-
-            .join-input {
-                flex-direction: column;
-            }
-
-            .events-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .calendar-controls {
-                justify-content: center;
-            }
-
-            .file-actions {
-                flex-direction: column;
+                align-items: stretch;
             }
         }
 
-        /* Loading overlay */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            display: none;
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+
+        .empty-state h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-500);
+        }
+
+        /* Course found result */
+        .course-found {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .course-found-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid var(--medium-gray);
-            border-top: 4px solid var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Loading Overlay -->
-        <div class="loading-overlay" id="loadingOverlay">
-            <div>
-                <div class="loading-spinner"></div>
-                <p style="margin-top: 16px; color: var(--primary-black); font-family: var(--font-mono);">Loading...</p>
-            </div>
-        </div>
-
         <!-- Header -->
         <header class="header">
-            <div class="header-left">
-                <span class="logo" onclick="showDashboard()">📚 SyllabAI</span>
-            </div>
-            <div class="user-menu">
-                <div class="user-info-header" id="userInfoHeader" style="display: none;">
+            <span class="logo" onclick="showDashboard()">📚 SyllabAI</span>
+            <div class="user-info">
+                <div class="user-info-header" id="userInfoHeader">
                     <span id="userNameHeader">Not signed in</span>
                     <button class="sign-out-btn" onclick="signOut()">Sign Out</button>
                 </div>
@@ -1057,48 +672,40 @@
             <!-- Sign-in Section -->
             <div class="sign-in-section" id="signInSection">
                 <h1>📚 SyllabAI</h1>
-                <p style="font-size: 1.2rem; margin-bottom: 24px; color: var(--secondary-black);">
-                    Transform syllabi into smart, synchronized calendars for everyone
-                </p>
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
-                    <p style="color: var(--secondary-black); font-size: 0.95rem; max-width: 600px; text-align: center;">
-                        📚 <strong>Professors:</strong> Create courses, upload syllabi, and automatically extract assignment deadlines<br>
-                        🎓 <strong>Students:</strong> Join courses and sync all your academic events to Google Calendar
-                    </p>
-                    <div class="google-signin-container">
-                        <div id="googleSignInBtn"></div>
-                        <button class="custom-google-btn" id="customGoogleBtn" onclick="handleCustomSignIn()">
-                            🔐 Sign in with Google
-                        </button>
-                    </div>
+                <p>Transform syllabi into smart, synchronized calendars</p>
+                <div style="max-width: 500px; margin: 0 auto; font-size: 0.95rem; color: var(--gray-600);">
+                    <p><strong>👨‍🏫 Professors:</strong> Upload syllabi → AI extracts events → auto-sync to student calendars</p>
+                    <p><strong>🎓 Students:</strong> Join courses or upload your own syllabus → sync to Google Calendar</p>
                 </div>
-            </div>
-
-            <!-- Demo Mode Notice -->
-            <div id="demoNotice" style="display: none; background: var(--accent-warning); color: var(--primary-black); padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
-                <strong>Demo Mode:</strong> Backend server unavailable. Using local demo functionality.
+                <div class="google-signin-container">
+                    <div id="googleSignInBtn"></div>
+                    <button class="custom-google-btn" id="customGoogleBtn" onclick="handleCustomSignIn()">
+                        🔐 Sign in with Google
+                    </button>
+                </div>
             </div>
 
             <!-- Professor Dashboard -->
             <div class="dashboard" id="professorDashboard">
                 <div class="dashboard-header">
                     <h1 class="dashboard-title">Professor Dashboard</h1>
-                    <p class="dashboard-subtitle">Manage your courses and upload syllabi</p>
+                    <p class="dashboard-subtitle">Manage courses and sync syllabi to student calendars</p>
                 </div>
                 
-                <div class="course-actions">
-                    <button class="action-btn" onclick="showCreateCourseModal()">
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="showCreateCourseModal()">
                         ➕ Create New Course
                     </button>
-                    <button class="action-btn secondary" onclick="loadMyCourses()">
-                        📚 Refresh Courses
+                    <button class="btn btn-secondary" onclick="loadMyCourses()">
+                        🔄 Refresh Courses
                     </button>
                 </div>
                 
                 <div id="professorCourses" class="courses-grid">
-                    <p style="text-align: center; color: var(--secondary-black); grid-column: 1/-1;">
-                        Loading courses...
-                    </p>
+                    <div class="loading-state">
+                        <div class="progress-spinner"></div>
+                        <p>Loading courses...</p>
+                    </div>
                 </div>
             </div>
 
@@ -1106,93 +713,110 @@
             <div class="dashboard" id="studentDashboard">
                 <div class="dashboard-header">
                     <h1 class="dashboard-title">Student Dashboard</h1>
-                    <p class="dashboard-subtitle">Join courses and manage your academic calendar</p>
+                    <p class="dashboard-subtitle">Join courses and sync events to your calendar</p>
                 </div>
                 
-                <div class="join-course-section">
-                    <h3 style="margin-bottom: 16px; color: var(--primary-black);">📚 Join a Course</h3>
-                    <p style="margin-bottom: 16px; color: var(--secondary-black);">Enter a course code provided by your professor</p>
-                    <div class="join-input">
-                        <input type="text" class="course-code-input" placeholder="Enter course code" id="courseCodeInput" maxlength="8">
-                        <button class="join-btn" onclick="handleJoinCourse()">Join Course</button>
+                <!-- Course Search -->
+                <div class="course-search-section">
+                    <h3>🔍 Find Your Course</h3>
+                    <div class="search-form">
+                        <div class="form-group">
+                            <label for="schoolSelect">School</label>
+                            <select id="schoolSelect" class="form-select">
+                                <option value="">Select School...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="crnInput">Course CRN</label>
+                            <input type="text" id="crnInput" class="form-input" placeholder="e.g., 12345" maxlength="10">
+                        </div>
+                        <div class="form-group">
+                            <label for="semesterSelect">Semester</label>
+                            <select id="semesterSelect" class="form-select">
+                                <option value="">Select Semester...</option>
+                                <option value="2025SP">Spring 2025</option>
+                                <option value="2025SU">Summer 2025</option>
+                                <option value="2025FA">Fall 2025</option>
+                                <option value="2026SP">Spring 2026</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="searchCourse()">Search</button>
+                    </div>
+                    
+                    <div id="courseSearchResult"></div>
+                </div>
+
+                <!-- Student's Enrolled Courses -->
+                <div id="studentCourses" class="courses-grid">
+                    <div class="loading-state">
+                        <div class="progress-spinner"></div>
+                        <p>Loading enrolled courses...</p>
                     </div>
                 </div>
-                
-                <div id="studentCourses" class="courses-grid">
-                    <p style="text-align: center; color: var(--secondary-black); grid-column: 1/-1;">
-                        Loading courses...
-                    </p>
+
+                <!-- Self-Upload Section -->
+                <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--gray-200);">
+                    <h3 style="text-align: center; margin-bottom: 1rem; color: var(--gray-700);">📄 Or Upload Your Own Syllabus</h3>
+                    <div class="upload-section" id="selfUploadSection" style="display: block;">
+                        <h3>Drag & Drop Your Syllabus</h3>
+                        <p>Upload a PDF or Word document and we'll extract events for you</p>
+                        <input type="file" id="selfFileInput" class="file-input" accept=".pdf,.docx">
+                        <button class="btn btn-secondary" onclick="document.getElementById('selfFileInput').click()">
+                            📎 Choose File
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Syllabus Upload Section -->
-            <div class="upload-section" id="uploadSection" style="display: none;"
-                 tabindex="0"
-                 role="button"
-                 aria-label="Upload syllabus file"
-                 onkeydown="handleUploadKeydown(event)">
-                <div class="upload-icon" aria-hidden="true">📄</div>
+            <!-- Syllabus Upload Section (Professor) -->
+            <div class="upload-section" id="professorUploadSection">
                 <h3>Upload Syllabus for <span id="selectedCourseName">Selected Course</span></h3>
                 <p>Drop your syllabus here or click to browse • Supports PDF and Word documents</p>
-                <input type="file" 
-                       id="fileInput" 
-                       class="file-input" 
-                       accept=".pdf,.docx"
-                       aria-describedby="file-help" />
-                <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                    Choose File
+                <input type="file" id="professorFileInput" class="file-input" accept=".pdf,.docx">
+                <button class="btn btn-secondary" onclick="document.getElementById('professorFileInput').click()">
+                    📎 Choose File
                 </button>
-                <div id="file-help" class="sr-only">Supported formats: PDF, DOCX. Maximum size: 10MB</div>
             </div>
 
-            <!-- File Preview -->
-            <div class="file-preview" id="filePreview" style="display: none;">
-                <h3>📎 Selected File</h3>
-                <div class="file-preview-card">
-                    <div class="file-info">
-                        <div class="file-icon" id="previewFileIcon" aria-hidden="true">📄</div>
-                        <div class="file-details">
-                            <h4 id="previewFileName">document.pdf</h4>
-                            <p id="previewFileSize">2.3 MB</p>
-                            <p id="previewFileType">PDF Document</p>
-                        </div>
-                    </div>
-                    <div class="file-actions">
-                        <button class="process-btn" id="processBtn" onclick="processFile()">
-                            🚀 Process Syllabus
-                        </button>
-                        <button class="remove-btn" onclick="removeSelectedFile()">
-                            🗑️ Remove File
-                        </button>
-                    </div>
+            <!-- Event Editor -->
+            <div class="event-editor" id="eventEditor">
+                <h3>📅 Review and Edit Events</h3>
+                <p style="color: var(--gray-600); margin-bottom: 1.5rem;">
+                    AI has extracted these events from your syllabus. Review and edit as needed, then publish to sync with student calendars.
+                </p>
+                
+                <div style="overflow-x: auto;">
+                    <table class="events-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Category</th>
+                                <th>Location</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventsTableBody">
+                            <!-- Events will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="hideEventEditor()">Cancel</button>
+                    <button class="btn btn-success" onclick="publishEvents()">
+                        🚀 Publish Events
+                    </button>
                 </div>
             </div>
 
             <!-- Progress Container -->
             <div class="progress-container" id="progressContainer">
-                <div class="progress-circle" id="progressCircle" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-text" id="progressText" aria-live="polite">0%</div>
-                </div>
-                <div class="progress-status" id="progressStatus" aria-live="polite">Initializing...</div>
-                <div class="progress-substatus" id="progressSubstatus">Please wait while we process your file</div>
+                <div class="progress-spinner"></div>
+                <h3 id="progressStatus">Processing...</h3>
+                <p id="progressSubstatus" style="color: var(--gray-600);">Please wait while we analyze your syllabus</p>
             </div>
-
-            <!-- Events Section -->
-            <div class="events-section" id="eventsSection">
-                <div class="events-header">
-                    <h2>📅 Extracted Events</h2>
-                    <div class="calendar-controls">
-                        <button class="add-to-calendar-btn" id="addToCalendarBtn" onclick="addToGoogleCalendar()">
-                            📅 Add to Google Calendar
-                        </button>
-                    </div>
-                </div>
-                <div id="eventsList"></div>
-            </div>
-
-            <!-- Error/Success Messages -->
-            <div class="error" id="errorMessage" role="alert"></div>
-            <div class="success" id="successMessage" role="status"></div>
         </div>
 
         <!-- Create Course Modal -->
@@ -1204,18 +828,35 @@
                 </div>
                 <form id="createCourseForm" onsubmit="handleCreateCourse(event)">
                     <div class="form-group">
+                        <label for="courseSchool">School</label>
+                        <select id="courseSchool" class="form-select" required>
+                            <option value="">Select School...</option>
+                        </select>
+                        <input type="text" id="newSchoolName" class="form-input" placeholder="Or enter new school name" style="margin-top: 0.5rem;">
+                    </div>
+                    <div class="form-group">
+                        <label for="courseCRN">Course CRN</label>
+                        <input type="text" id="courseCRN" class="form-input" required maxlength="10" 
+                               placeholder="e.g., 12345">
+                    </div>
+                    <div class="form-group">
                         <label for="courseTitle">Course Title</label>
-                        <input type="text" id="courseTitle" required maxlength="100" 
+                        <input type="text" id="courseTitle" class="form-input" required maxlength="100" 
                                placeholder="e.g., Introduction to Psychology">
                     </div>
                     <div class="form-group">
-                        <label for="courseDescription">Description (Optional)</label>
-                        <textarea id="courseDescription" rows="3" maxlength="500"
-                                  placeholder="Brief description of the course"></textarea>
+                        <label for="courseSemester">Semester</label>
+                        <select id="courseSemester" class="form-select" required>
+                            <option value="">Select Semester...</option>
+                            <option value="2025SP">Spring 2025</option>
+                            <option value="2025SU">Summer 2025</option>
+                            <option value="2025FA">Fall 2025</option>
+                            <option value="2026SP">Spring 2026</option>
+                        </select>
                     </div>
                     <div class="modal-actions">
-                        <button type="button" class="modal-btn secondary" onclick="closeCreateCourseModal()">Cancel</button>
-                        <button type="submit" class="modal-btn primary">Create Course</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeCreateCourseModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Course</button>
                     </div>
                 </form>
             </div>
@@ -1224,273 +865,97 @@
 
     <script>
         // ====================================================================
-        // CONFIGURATION & GLOBAL VARIABLES
+        // CONFIGURATION & GLOBAL STATE
         // ====================================================================
         
-        // Backend API Configuration
-        const API_BASE_URL = 'https://syllaai-ai.onrender.com';
+        const API_BASE_URL = 'https://syllaai-ai.onrender.com';  // Update this!
         
-        // Global state
         let currentUser = null;
         let authToken = null;
-        let selectedFile = null;
         let selectedCourse = null;
         let extractedEvents = [];
-        let demoMode = false;
-        let googleApiReady = false;
-        let googleAuthReady = false;
+        let schools = [];
         
-        // Google API Configuration
         const GOOGLE_CLIENT_ID = '208074157418-pr4ks1ronvggb2blrqoomd8hhutkmco1.apps.googleusercontent.com';
-        const GOOGLE_API_KEY = 'AIzaSyBgwVJrwWRTIWzi4dKTI5Eq13JOTF0Zbdg';
-        const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'];
         const SCOPES = 'openid email profile https://www.googleapis.com/auth/calendar';
-        
-        // PDF.js worker configuration
-        if (typeof pdfjsLib !== 'undefined') {
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-        }
-        
+
         // ====================================================================
         // INITIALIZATION
         // ====================================================================
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             initializeApp();
         });
 
         async function initializeApp() {
-            console.log('🚀 Initializing SyllabAI...');
-            showLoading(true);
+            console.log('🚀 Initializing SyllabAI MVP...');
             
             try {
                 setupFileUpload();
-                checkServerConnection();
+                await initializeGoogleAuth();
+                await loadSchools();
                 showSignInSection();
-                
-                // Initialize Google APIs in background (non-blocking)
-                initializeGoogleApis().catch(error => {
-                    console.warn('⚠️ Google APIs failed to initialize:', error);
-                    showCustomSignInButton();
-                    enableDemoMode();
-                });
-                
                 console.log('✅ App initialized');
             } catch (error) {
                 console.error('❌ App initialization failed:', error);
-                showToast('App initialization failed. Some features may not work.', 'warning');
-                enableDemoMode();
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        function setupFileUpload() {
-            const uploadSection = document.getElementById('uploadSection');
-            const fileInput = document.getElementById('fileInput');
-
-            uploadSection.addEventListener('dragover', e => {
-                e.preventDefault();
-                uploadSection.classList.add('dragover');
-            });
-
-            uploadSection.addEventListener('dragleave', () =>
-                uploadSection.classList.remove('dragover')
-            );
-
-            uploadSection.addEventListener('drop', e => {
-                e.preventDefault();
-                uploadSection.classList.remove('dragover');
-                const files = e.dataTransfer.files;
-                if (files.length) selectFile(files[0]);
-            });
-
-            fileInput.addEventListener('change', e => {
-                if (e.target.files.length) selectFile(e.target.files[0]);
-            });
-        }
-
-        function handleUploadKeydown(event) {
-            if (event.key === 'Enter' || event.key === ' ') {
-                event.preventDefault();
-                document.getElementById('fileInput').click();
+                showToast('App initialization failed. Please refresh the page.', 'error');
             }
         }
 
         // ====================================================================
-        // GOOGLE API INITIALIZATION
+        // GOOGLE AUTHENTICATION
         // ====================================================================
 
-        async function initializeGoogleApis() {
+        async function initializeGoogleAuth() {
             try {
-                console.log('🔧 Initializing Google APIs...');
+                await waitForGoogle();
                 
-                // Wait for Google APIs to be available with longer timeout
-                await waitForGoogleApis();
-                
-                // Initialize Google API client first
-                await initializeGapiClient();
-                
-                // Wait a bit more for Google Identity Services
-                await sleep(1000);
-                
-                // Initialize Google Identity Services
-                await initializeGoogleIdentity();
-                
-                console.log('✅ Google APIs initialized successfully');
-                
-            } catch (error) {
-                console.error('❌ Google API initialization failed:', error);
-                showCustomSignInButton();
-                throw error;
-            }
-        }
-
-        async function waitForGoogleApis() {
-            let attempts = 0;
-            const maxAttempts = 50; // Increased timeout
-            
-            while (attempts < maxAttempts) {
-                if (typeof gapi !== 'undefined' && typeof google !== 'undefined' && 
-                    google.accounts && google.accounts.id) {
-                    console.log('✅ Google APIs loaded');
-                    return;
-                }
-                console.log(`⏳ Waiting for Google APIs... attempt ${attempts + 1}`);
-                await sleep(200);
-                attempts++;
-            }
-            
-            throw new Error('Google APIs failed to load within timeout');
-        }
-
-        async function initializeGapiClient() {
-            return new Promise((resolve, reject) => {
-                gapi.load('client', {
-                    callback: async () => {
-                        try {
-                            await gapi.client.init({
-                                apiKey: GOOGLE_API_KEY,
-                                discoveryDocs: DISCOVERY_DOCS
-                            });
-                            googleApiReady = true;
-                            console.log('✅ Google API client initialized');
-                            resolve();
-                        } catch (error) {
-                            console.error('❌ Google API client init failed:', error);
-                            reject(error);
-                        }
-                    },
-                    onerror: (error) => {
-                        console.error('❌ Failed to load Google API client:', error);
-                        reject(error);
-                    }
-                });
-            });
-        }
-
-        async function initializeGoogleIdentity() {
-            try {
-                // Double-check that google is available
-                if (!google || !google.accounts || !google.accounts.id) {
-                    throw new Error('Google Identity Services not available');
-                }
-
-                console.log('🔧 Initializing Google Identity Services...');
-
                 google.accounts.id.initialize({
                     client_id: GOOGLE_CLIENT_ID,
                     callback: handleCredentialResponse,
-                    auto_select: false,
-                    cancel_on_tap_outside: true
+                    auto_select: false
                 });
 
-                // Try to render the button with additional error handling
                 try {
-                    const buttonContainer = document.getElementById('googleSignInBtn');
-                    if (buttonContainer) {
-                        google.accounts.id.renderButton(buttonContainer, { 
-                            theme: 'outline', 
-                            size: 'large', 
-                            text: 'signin_with',
-                            width: 300
-                        });
-                        googleAuthReady = true;
-                        console.log('✅ Google Sign-In button rendered');
-                    } else {
-                        throw new Error('Button container not found');
-                    }
-                } catch (buttonError) {
-                    console.warn('⚠️ Failed to render Google button:', buttonError);
-                    showCustomSignInButton();
+                    google.accounts.id.renderButton(
+                        document.getElementById('googleSignInBtn'),
+                        { theme: 'outline', size: 'large', text: 'signin_with', width: 300 }
+                    );
+                } catch (error) {
+                    document.getElementById('customGoogleBtn').style.display = 'block';
                 }
 
+                console.log('✅ Google Auth initialized');
             } catch (error) {
-                console.error('❌ Google Identity Services init failed:', error);
-                showCustomSignInButton();
-                throw error;
+                console.error('❌ Google Auth failed:', error);
+                document.getElementById('customGoogleBtn').style.display = 'block';
             }
         }
 
-        function showCustomSignInButton() {
-            const customBtn = document.getElementById('customGoogleBtn');
-            const googleBtn = document.getElementById('googleSignInBtn');
-            
-            if (customBtn) {
-                customBtn.style.display = 'block';
+        async function waitForGoogle() {
+            let attempts = 0;
+            while (attempts < 50) {
+                if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                    return;
+                }
+                await sleep(100);
+                attempts++;
             }
-            
-            // Hide the Google button container if it exists but is empty
-            if (googleBtn && (!googleBtn.children || googleBtn.children.length === 0)) {
-                googleBtn.style.display = 'none';
-            }
+            throw new Error('Google API failed to load');
         }
 
         function handleCustomSignIn() {
-            // Wait for Google to be available
-            if (!window.google || !window.google.accounts || !window.google.accounts.id) {
-                showToast('Google authentication is still loading. Please wait a moment...', 'warning');
-                
-                // Try again after a delay
-                setTimeout(() => {
-                    if (window.google && window.google.accounts && window.google.accounts.id) {
-                        window.google.accounts.id.prompt();
-                    } else {
-                        showToast('Google authentication is not available. Please refresh the page.', 'error');
-                    }
-                }, 2000);
-                return;
-            }
-            
-            try {
-                window.google.accounts.id.prompt();
-            } catch (error) {
-                console.error('Custom sign-in failed:', error);
-                showToast('Sign-in failed. Please refresh the page and try again.', 'error');
+            if (google && google.accounts && google.accounts.id) {
+                google.accounts.id.prompt();
+            } else {
+                showToast('Google authentication is not available. Please refresh the page.', 'error');
             }
         }
-
-        // ====================================================================
-        // AUTHENTICATION
-        // ====================================================================
 
         async function handleCredentialResponse(response) {
             try {
                 console.log('🔐 Received Google credential');
-                
-                if (!response.credential) {
-                    throw new Error('No credential received from Google');
-                }
-
-                // Try to authenticate with backend
-                try {
-                    await signInWithBackend(response.credential);
-                } catch (backendError) {
-                    console.warn('⚠️ Backend authentication failed, enabling demo mode:', backendError);
-                    enableDemoMode();
-                    await handleDemoSignIn(response.credential);
-                }
-                
+                await signInWithBackend(response.credential);
             } catch (error) {
                 console.error('❌ Authentication failed:', error);
                 showToast(`Authentication failed: ${error.message}`, 'error');
@@ -1499,28 +964,20 @@
 
         async function signInWithBackend(googleToken) {
             try {
-                console.log('🔐 Signing in with backend...');
-                
                 const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        token: googleToken
-                    }),
-                    mode: 'cors'
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: googleToken })
                 });
                 
                 if (!response.ok) {
                     const error = await response.json().catch(() => ({ detail: 'Authentication failed' }));
-                    throw new Error(error.detail || 'Authentication failed');
+                    throw new Error(error.detail);
                 }
                 
                 const authResult = await response.json();
                 authToken = authResult.access_token;
-                
-                await getCurrentUser();
+                currentUser = authResult.user;
                 
                 showToast('✅ Signed in successfully!', 'success');
                 updateUIForSignedInUser();
@@ -1531,90 +988,14 @@
             }
         }
 
-        async function handleDemoSignIn(googleToken) {
-            try {
-                // Decode the JWT token to get user info
-                const payload = JSON.parse(atob(googleToken.split('.')[1]));
-                
-                currentUser = {
-                    id: 'demo-' + payload.sub,
-                    name: payload.name || 'Demo User',
-                    email: payload.email || 'demo@example.com',
-                    role: 'professor' // Default to professor for demo
-                };
-                
-                showToast('✅ Signed in (Demo Mode)!', 'success');
-                document.getElementById('demoNotice').style.display = 'block';
-                updateUIForSignedInUser();
-                
-            } catch (error) {
-                console.error('❌ Demo sign-in failed:', error);
-                currentUser = {
-                    id: 'demo-user',
-                    name: 'Demo User',
-                    email: 'demo@example.com',
-                    role: 'professor'
-                };
-                showToast('✅ Signed in (Demo Mode)!', 'success');
-                document.getElementById('demoNotice').style.display = 'block';
-                updateUIForSignedInUser();
-            }
-        }
-
-        async function getCurrentUser() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to get user info');
-                }
-                
-                currentUser = await response.json();
-                console.log('✅ Current user:', currentUser);
-                
-                return currentUser;
-            } catch (error) {
-                console.error('❌ Failed to get user info:', error);
-                throw error;
-            }
-        }
-
         function signOut() {
-            try {
-                // Clear state
-                authToken = null;
-                currentUser = null;
-                selectedCourse = null;
-                selectedFile = null;
-                extractedEvents = [];
-                demoMode = false;
-                
-                // Clear Google auth
-                if (googleApiReady && gapi.client.getToken) {
-                    const token = gapi.client.getToken();
-                    if (token && token.access_token) {
-                        google.accounts.oauth2.revoke(token.access_token, () => {
-                            console.log('✅ Token revoked');
-                        });
-                    }
-                    gapi.client.setToken('');
-                }
-                
-                // Reset UI
-                showSignInSection();
-                document.getElementById('demoNotice').style.display = 'none';
-                
-                showToast('Signed out successfully', 'info');
-                
-            } catch (error) {
-                console.error('❌ Sign-out error:', error);
-                showToast('Signed out', 'info');
-                showSignInSection();
-            }
+            authToken = null;
+            currentUser = null;
+            selectedCourse = null;
+            extractedEvents = [];
+            
+            showSignInSection();
+            showToast('Signed out successfully', 'info');
         }
 
         // ====================================================================
@@ -1622,24 +1003,20 @@
         // ====================================================================
 
         function updateUIForSignedInUser() {
-            // Hide sign-in section
             document.getElementById('signInSection').style.display = 'none';
             
-            // Update header
             const userInfoHeader = document.getElementById('userInfoHeader');
             const userNameHeader = document.getElementById('userNameHeader');
             
-            if (userInfoHeader && userNameHeader && currentUser) {
-                const roleDisplay = demoMode ? `${currentUser.role} (Demo)` : currentUser.role;
-                userNameHeader.textContent = `${currentUser.name} (${roleDisplay})`;
+            if (currentUser) {
+                userNameHeader.textContent = `${currentUser.name} (${currentUser.role})`;
                 userInfoHeader.style.display = 'flex';
-            }
-            
-            // Show appropriate dashboard
-            if (currentUser.role === 'professor') {
-                showProfessorDashboard();
-            } else if (currentUser.role === 'student') {
-                showStudentDashboard();
+                
+                if (currentUser.role === 'professor') {
+                    showProfessorDashboard();
+                } else {
+                    showStudentDashboard();
+                }
             }
         }
 
@@ -1647,29 +1024,20 @@
             document.getElementById('signInSection').style.display = 'block';
             document.getElementById('professorDashboard').classList.remove('active');
             document.getElementById('studentDashboard').classList.remove('active');
-            document.getElementById('uploadSection').style.display = 'none';
-            document.getElementById('eventsSection').style.display = 'none';
-            
-            const userInfoHeader = document.getElementById('userInfoHeader');
-            if (userInfoHeader) {
-                userInfoHeader.style.display = 'none';
-            }
+            document.getElementById('userInfoHeader').style.display = 'none';
         }
 
         function showProfessorDashboard() {
-            document.getElementById('signInSection').style.display = 'none';
             document.getElementById('professorDashboard').classList.add('active');
             document.getElementById('studentDashboard').classList.remove('active');
-            
             loadMyCourses();
         }
 
         function showStudentDashboard() {
-            document.getElementById('signInSection').style.display = 'none';
-            document.getElementById('professorDashboard').classList.remove('active');
             document.getElementById('studentDashboard').classList.add('active');
-            
+            document.getElementById('professorDashboard').classList.remove('active');
             loadMyCourses();
+            loadSchoolsForSearch();
         }
 
         function showDashboard() {
@@ -1679,73 +1047,42 @@
                 } else {
                     showStudentDashboard();
                 }
-                // Hide upload and events sections
-                document.getElementById('uploadSection').style.display = 'none';
-                document.getElementById('eventsSection').style.display = 'none';
             }
         }
 
-        function showLoading(show) {
-            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
-        }
-
         // ====================================================================
-        // DEMO MODE
+        // SCHOOL MANAGEMENT
         // ====================================================================
 
-        function enableDemoMode() {
-            demoMode = true;
-            console.log('📝 Demo mode enabled');
-        }
-
-        async function checkServerConnection() {
+        async function loadSchools() {
             try {
-                const response = await fetch(`${API_BASE_URL}/health`, {
-                    method: 'GET',
-                    mode: 'cors',
-                    timeout: 5000
-                });
-                
+                const response = await fetch(`${API_BASE_URL}/api/courses/schools`);
                 if (response.ok) {
-                    console.log('✅ Server connection successful');
-                    return true;
+                    schools = await response.json();
                 }
             } catch (error) {
-                console.warn('⚠️ Server connection failed, enabling demo mode:', error);
-                enableDemoMode();
+                console.warn('Failed to load schools:', error);
+                schools = [
+                    { id: 1, name: 'University of Michigan' },
+                    { id: 2, name: 'Michigan State University' },
+                    { id: 3, name: 'Wayne State University' }
+                ];
             }
-            return false;
         }
 
-        function generateDemoCourses() {
-            if (currentUser.role === 'professor') {
-                return [
-                    {
-                        id: 'demo-course-1',
-                        code: 'CS101',
-                        title: 'Introduction to Computer Science',
-                        description: 'Learn the fundamentals of programming and computer science.',
-                        created_at: new Date().toISOString()
-                    },
-                    {
-                        id: 'demo-course-2',
-                        code: 'MATH201',
-                        title: 'Calculus II',
-                        description: 'Advanced calculus concepts and applications.',
-                        created_at: new Date().toISOString()
-                    }
-                ];
-            } else {
-                return [
-                    {
-                        id: 'demo-course-3',
-                        code: 'ENG101',
-                        title: 'English Composition',
-                        description: 'Writing and communication skills.',
-                        created_at: new Date().toISOString()
-                    }
-                ];
-            }
+        function loadSchoolsForSearch() {
+            const schoolSelect = document.getElementById('schoolSelect');
+            const courseSchoolSelect = document.getElementById('courseSchool');
+            
+            schoolSelect.innerHTML = '<option value="">Select School...</option>';
+            courseSchoolSelect.innerHTML = '<option value="">Select School...</option>';
+            
+            schools.forEach(school => {
+                const option1 = new Option(school.name, school.id);
+                const option2 = new Option(school.name, school.id);
+                schoolSelect.add(option1);
+                courseSchoolSelect.add(option2);
+            });
         }
 
         // ====================================================================
@@ -1754,83 +1091,81 @@
 
         async function loadMyCourses() {
             try {
-                const courses = demoMode ? generateDemoCourses() : await getUserCourses();
-                displayUserCourses(courses);
-            } catch (error) {
-                console.error('❌ Failed to load courses:', error);
-                if (!demoMode) {
-                    enableDemoMode();
-                    const courses = generateDemoCourses();
-                    displayUserCourses(courses);
-                }
-            }
-        }
-
-        async function getUserCourses() {
-            try {
                 const response = await fetch(`${API_BASE_URL}/api/courses/`, {
-                    headers: {
-                        'Authorization': `Bearer ${authToken}`
-                    }
+                    headers: { 'Authorization': `Bearer ${authToken}` }
                 });
                 
-                if (!response.ok) {
-                    const error = await response.json().catch(() => ({ detail: 'Failed to get courses' }));
-                    throw new Error(error.detail || 'Failed to get courses');
-                }
+                if (!response.ok) throw new Error('Failed to load courses');
                 
                 const courses = await response.json();
-                return courses;
+                displayCourses(courses);
                 
             } catch (error) {
-                console.error('❌ Failed to get courses:', error);
-                throw error;
+                console.error('❌ Failed to load courses:', error);
+                showToast('Failed to load courses', 'error');
+                
+                // Show empty state
+                const container = currentUser.role === 'professor' 
+                    ? document.getElementById('professorCourses')
+                    : document.getElementById('studentCourses');
+                
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>No courses found</h3>
+                        <p>${currentUser.role === 'professor' ? 'Create your first course to get started!' : 'Search for courses to join above!'}</p>
+                    </div>
+                `;
             }
         }
 
-        function displayUserCourses(courses) {
+        function displayCourses(courses) {
             const container = currentUser.role === 'professor' 
                 ? document.getElementById('professorCourses')
                 : document.getElementById('studentCourses');
             
             if (courses.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; color: var(--secondary-black); grid-column: 1/-1; padding: 40px;">
+                    <div class="empty-state">
                         <h3>No courses found</h3>
-                        <p>${currentUser.role === 'professor' ? 'Create your first course to get started!' : 'Join a course using the code above!'}</p>
+                        <p>${currentUser.role === 'professor' ? 'Create your first course to get started!' : 'Search for courses to join above!'}</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = courses.map(course => `
-                <div class="course-card" onclick="selectCourse('${course.id}', '${course.title}', '${course.code}')">
-                    <div class="course-code">${course.code}</div>
-                    <div class="course-title">${course.title}</div>
-                    ${course.description ? `<div class="course-description">${course.description}</div>` : ''}
-                    <div class="course-meta">
-                        <span>Created: ${new Date(course.created_at).toLocaleDateString()}</span>
-                        <span style="color: var(--accent-primary); font-weight: 600;">Click to ${currentUser.role === 'professor' ? 'upload syllabus' : 'view'}</span>
+            container.innerHTML = courses.map(course => {
+                const schoolName = course.school ? course.school.name : 'Unknown School';
+                const studentCount = course.student_count || 0;
+                
+                return `
+                    <div class="course-card" onclick="selectCourse('${course.id}', '${course.title}', '${course.crn}')">
+                        <div class="course-header">
+                            <div class="course-code">${course.crn}</div>
+                            <div class="course-semester">${course.semester}</div>
+                        </div>
+                        <div class="course-title">${course.title}</div>
+                        <div class="course-school">${schoolName}</div>
+                        <div class="course-meta">
+                            <span>Created: ${new Date(course.created_at).toLocaleDateString()}</span>
+                            ${currentUser.role === 'professor' 
+                                ? `<span>${studentCount} students</span>` 
+                                : '<span>Click to view</span>'
+                            }
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
-        function selectCourse(courseId, courseTitle, courseCode) {
-            selectedCourse = {
-                id: courseId,
-                title: courseTitle,
-                code: courseCode
-            };
+        function selectCourse(courseId, courseTitle, courseCrn) {
+            selectedCourse = { id: courseId, title: courseTitle, crn: courseCrn };
             
             if (currentUser.role === 'professor') {
-                // Show upload section for professors
-                document.getElementById('uploadSection').style.display = 'block';
-                document.getElementById('selectedCourseName').textContent = `${courseTitle} (${courseCode})`;
-                showToast(`Course selected: ${courseTitle}. You can now upload a syllabus.`, 'success');
+                document.getElementById('selectedCourseName').textContent = `${courseTitle} (${courseCrn})`;
+                document.getElementById('professorUploadSection').style.display = 'block';
+                showToast(`Course selected: ${courseTitle}. Upload a syllabus to get started.`, 'success');
             } else {
-                // For students, maybe show course events in the future
-                showToast(`Selected course: ${courseTitle} (${courseCode})`, 'info');
+                showToast(`Selected course: ${courseTitle} (${courseCrn})`, 'info');
             }
         }
 
@@ -1839,6 +1174,7 @@
         // ====================================================================
 
         function showCreateCourseModal() {
+            loadSchoolsForSearch();
             document.getElementById('createCourseModal').classList.add('show');
         }
 
@@ -1850,104 +1186,142 @@
         async function handleCreateCourse(event) {
             event.preventDefault();
             
+            const schoolId = document.getElementById('courseSchool').value;
+            const newSchoolName = document.getElementById('newSchoolName').value.trim();
+            const crn = document.getElementById('courseCRN').value.trim();
             const title = document.getElementById('courseTitle').value.trim();
-            const description = document.getElementById('courseDescription').value.trim();
+            const semester = document.getElementById('courseSemester').value;
             
-            if (!title) {
-                showToast('Course title is required', 'error');
+            if (!title || !crn || !semester) {
+                showToast('Please fill in all required fields', 'error');
                 return;
             }
-            
+
             try {
-                const courseData = {
-                    title: title,
-                    description: description || null
-                };
+                let finalSchoolId = schoolId;
                 
-                if (demoMode) {
-                    // Demo course creation
-                    const course = {
-                        id: 'demo-course-' + Date.now(),
-                        code: generateCourseCode(),
-                        title: courseData.title,
-                        description: courseData.description,
-                        created_at: new Date().toISOString()
-                    };
+                // Create new school if needed
+                if (!schoolId && newSchoolName) {
+                    const schoolResponse = await fetch(`${API_BASE_URL}/api/courses/schools`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name: newSchoolName })
+                    });
                     
-                    showToast(`Demo course created! Share code: ${course.code}`, 'success');
-                    closeCreateCourseModal();
-                    loadMyCourses();
-                } else {
-                    await createCourse(courseData);
-                    closeCreateCourseModal();
-                    loadMyCourses();
+                    if (schoolResponse.ok) {
+                        const newSchool = await schoolResponse.json();
+                        finalSchoolId = newSchool.id;
+                    }
                 }
                 
-            } catch (error) {
-                console.error('❌ Course creation failed:', error);
-            }
-        }
-
-        async function createCourse(courseData) {
-            try {
+                if (!finalSchoolId) {
+                    showToast('Please select a school or enter a new school name', 'error');
+                    return;
+                }
+                
+                // Create course
                 const response = await fetch(`${API_BASE_URL}/api/courses/`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${authToken}`,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(courseData)
+                    body: JSON.stringify({
+                        school_id: parseInt(finalSchoolId),
+                        crn: crn,
+                        title: title,
+                        semester: semester
+                    })
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json().catch(() => ({ detail: 'Failed to create course' }));
+                    const error = await response.json();
                     throw new Error(error.detail || 'Failed to create course');
                 }
                 
                 const course = await response.json();
-                showToast(`Course created! Share code: ${course.code}`, 'success');
-                return course;
+                showToast(`Course created! CRN: ${course.crn}`, 'success');
+                closeCreateCourseModal();
+                loadMyCourses();
                 
             } catch (error) {
-                console.error('❌ Failed to create course:', error);
+                console.error('❌ Course creation failed:', error);
                 showToast(`Failed to create course: ${error.message}`, 'error');
-                throw error;
             }
         }
 
-        function generateCourseCode() {
-            return Math.random().toString(36).substring(2, 8).toUpperCase();
-        }
-
         // ====================================================================
-        // COURSE JOINING (Students)
+        // COURSE SEARCH (Students)
         // ====================================================================
 
-        async function handleJoinCourse() {
-            const courseCode = document.getElementById('courseCodeInput').value.trim().toUpperCase();
-            if (!courseCode) {
-                showToast('Please enter a course code', 'error');
+        async function searchCourse() {
+            const schoolId = document.getElementById('schoolSelect').value;
+            const crn = document.getElementById('crnInput').value.trim();
+            const semester = document.getElementById('semesterSelect').value;
+            
+            if (!schoolId || !crn || !semester) {
+                showToast('Please fill in all search fields', 'warning');
                 return;
             }
             
             try {
-                if (demoMode) {
-                    // Demo join course
-                    showToast(`Demo: Joined course with code ${courseCode}`, 'success');
-                    document.getElementById('courseCodeInput').value = '';
-                    loadMyCourses();
-                } else {
-                    await joinCourse(courseCode);
-                    document.getElementById('courseCodeInput').value = '';
-                    loadMyCourses();
-                }
+                const response = await fetch(
+                    `${API_BASE_URL}/api/courses/search?school_id=${schoolId}&crn=${crn}&semester=${semester}`
+                );
+                
+                const course = await response.json();
+                displaySearchResult(course);
+                
             } catch (error) {
-                // Error already shown in joinCourse function
+                console.error('❌ Course search failed:', error);
+                showToast('Course search failed', 'error');
             }
         }
 
-        async function joinCourse(courseCode) {
+        function displaySearchResult(course) {
+            const resultContainer = document.getElementById('courseSearchResult');
+            
+            if (!course) {
+                resultContainer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                        <h3>Course not found</h3>
+                        <p>No course found with those details. Check with your professor.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const schoolName = course.school ? course.school.name : 'Unknown School';
+            const studentCount = course.student_count || 0;
+            
+            resultContainer.innerHTML = `
+                <div class="course-found">
+                    <div class="course-found-header">
+                        <div>
+                            <div class="course-code">${course.crn}</div>
+                            <div class="course-title">${course.title}</div>
+                            <div class="course-school">${schoolName} • ${course.semester}</div>
+                        </div>
+                        <button class="btn btn-success" onclick="enrollInCourse('${course.id}')">
+                            📚 Enroll
+                        </button>
+                    </div>
+                    <p style="color: var(--gray-600); font-size: 0.875rem;">
+                        ${studentCount} students enrolled
+                    </p>
+                </div>
+            `;
+        }
+
+        async function enrollInCourse(courseId) {
             try {
+                const schoolId = document.getElementById('schoolSelect').value;
+                const crn = document.getElementById('crnInput').value.trim();
+                const semester = document.getElementById('semesterSelect').value;
+                
                 const response = await fetch(`${API_BASE_URL}/api/courses/join`, {
                     method: 'POST',
                     headers: {
@@ -1955,23 +1329,29 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        course_code: courseCode
+                        school_id: parseInt(schoolId),
+                        crn: crn,
+                        semester: semester
                     })
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json().catch(() => ({ detail: 'Failed to join course' }));
-                    throw new Error(error.detail || 'Failed to join course');
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Failed to enroll');
                 }
                 
-                const course = await response.json();
-                showToast(`Successfully joined ${course.title}!`, 'success');
-                return course;
+                showToast('Successfully enrolled in course!', 'success');
+                loadMyCourses();
+                document.getElementById('courseSearchResult').innerHTML = '';
+                
+                // Clear form
+                document.getElementById('schoolSelect').value = '';
+                document.getElementById('crnInput').value = '';
+                document.getElementById('semesterSelect').value = '';
                 
             } catch (error) {
-                console.error('❌ Failed to join course:', error);
-                showToast(`Failed to join course: ${error.message}`, 'error');
-                throw error;
+                console.error('❌ Enrollment failed:', error);
+                showToast(`Enrollment failed: ${error.message}`, 'error');
             }
         }
 
@@ -1979,520 +1359,232 @@
         // FILE UPLOAD & PROCESSING
         // ====================================================================
 
-        function selectFile(file) {
-            hideMessages();
+        function setupFileUpload() {
+            // Professor upload
+            const professorUpload = document.getElementById('professorUploadSection');
+            const professorFileInput = document.getElementById('professorFileInput');
             
+            professorUpload.addEventListener('dragover', handleDragOver);
+            professorUpload.addEventListener('dragleave', handleDragLeave);
+            professorUpload.addEventListener('drop', (e) => handleDrop(e, 'professor'));
+            
+            professorFileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) handleFileSelect(e.target.files[0], 'professor');
+            });
+            
+            // Student self-upload
+            const selfUpload = document.getElementById('selfUploadSection');
+            const selfFileInput = document.getElementById('selfFileInput');
+            
+            selfUpload.addEventListener('dragover', handleDragOver);
+            selfUpload.addEventListener('dragleave', handleDragLeave);
+            selfUpload.addEventListener('drop', (e) => handleDrop(e, 'student'));
+            
+            selfFileInput.addEventListener('change', (e) => {
+                if (e.target.files.length) handleFileSelect(e.target.files[0], 'student');
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('dragover');
+        }
+
+        function handleDrop(e, mode) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length) handleFileSelect(files[0], mode);
+        }
+
+        async function handleFileSelect(file, mode) {
+            if (!validateFile(file)) return;
+            
+            showProgress('Processing syllabus...', 'Extracting text and analyzing events');
+            
+            try {
+                if (mode === 'professor') {
+                    await processProfessorSyllabus(file);
+                } else {
+                    await processStudentSyllabus(file);
+                }
+            } catch (error) {
+                console.error('❌ File processing failed:', error);
+                showToast(`Processing failed: ${error.message}`, 'error');
+            } finally {
+                hideProgress();
+            }
+        }
+
+        function validateFile(file) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            const allowedTypes = ['.pdf', '.docx'];
+            
+            if (file.size > maxSize) {
+                showToast('File too large! Please use files under 10MB.', 'error');
+                return false;
+            }
+            
+            const extension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'));
+            if (!allowedTypes.includes(extension)) {
+                showToast('Invalid file type! Please upload PDF or DOCX files only.', 'error');
+                return false;
+            }
+            
+            return true;
+        }
+
+        async function processProfessorSyllabus(file) {
             if (!selectedCourse) {
                 showToast('Please select a course first!', 'error');
                 return;
             }
             
-            const validation = validateFile(file);
-            if (!validation.valid) {
-                showToast(validation.message, 'error');
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await fetch(`${API_BASE_URL}/api/courses/${selectedCourse.id}/syllabus`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${authToken}` },
+                body: formData
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Failed to process syllabus');
+            }
+            
+            const result = await response.json();
+            extractedEvents = result.extracted_events;
+            
+            showToast(`Extracted ${extractedEvents.length} events from syllabus!`, 'success');
+            showEventEditor();
+        }
+
+        async function processStudentSyllabus(file) {
+            // For student self-upload, we'll do client-side processing for now
+            // In the full implementation, this could also hit the backend
+            showToast('Student self-upload feature coming soon!', 'info');
+        }
+
+        // ====================================================================
+        // EVENT EDITOR
+        // ====================================================================
+
+        function showEventEditor() {
+            const tableBody = document.getElementById('eventsTableBody');
+            
+            tableBody.innerHTML = extractedEvents.map((event, index) => `
+                <tr>
+                    <td><input type="text" value="${event.title}" onchange="updateEvent(${index}, 'title', this.value)"></td>
+                    <td><input type="date" value="${event.start_ts.split('T')[0]}" onchange="updateEventDate(${index}, this.value)"></td>
+                    <td><input type="time" value="${event.start_ts.split('T')[1]?.substring(0,5) || ''}" onchange="updateEventTime(${index}, this.value)"></td>
+                    <td>
+                        <select onchange="updateEvent(${index}, 'category', this.value)">
+                            <option value="Exam" ${event.category === 'Exam' ? 'selected' : ''}>Exam</option>
+                            <option value="Quiz" ${event.category === 'Quiz' ? 'selected' : ''}>Quiz</option>
+                            <option value="HW" ${event.category === 'HW' ? 'selected' : ''}>Homework</option>
+                            <option value="Project" ${event.category === 'Project' ? 'selected' : ''}>Project</option>
+                            <option value="Presentation" ${event.category === 'Presentation' ? 'selected' : ''}>Presentation</option>
+                            <option value="Class" ${event.category === 'Class' ? 'selected' : ''}>Class</option>
+                            <option value="Other" ${event.category === 'Other' ? 'selected' : ''}>Other</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${event.location || ''}" onchange="updateEvent(${index}, 'location', this.value)"></td>
+                    <td><button class="delete-event-btn" onclick="deleteEvent(${index})">Delete</button></td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('eventEditor').style.display = 'block';
+        }
+
+        function updateEvent(index, field, value) {
+            extractedEvents[index][field] = value || null;
+        }
+
+        function updateEventDate(index, dateValue) {
+            const event = extractedEvents[index];
+            const time = event.start_ts.split('T')[1] || '09:00:00';
+            event.start_ts = `${dateValue}T${time}`;
+            
+            // Update end time (1 hour later)
+            const startDate = new Date(event.start_ts);
+            const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+            event.end_ts = endDate.toISOString();
+        }
+
+        function updateEventTime(index, timeValue) {
+            const event = extractedEvents[index];
+            const date = event.start_ts.split('T')[0];
+            event.start_ts = `${date}T${timeValue}:00`;
+            
+            // Update end time (1 hour later)
+            const startDate = new Date(event.start_ts);
+            const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+            event.end_ts = endDate.toISOString();
+        }
+
+        function deleteEvent(index) {
+            extractedEvents.splice(index, 1);
+            showEventEditor(); // Refresh the table
+        }
+
+        function hideEventEditor() {
+            document.getElementById('eventEditor').style.display = 'none';
+            extractedEvents = [];
+        }
+
+        async function publishEvents() {
+            if (!selectedCourse || extractedEvents.length === 0) {
+                showToast('No events to publish', 'error');
                 return;
             }
-            
-            selectedFile = file;
-            showFilePreview(file);
-            showToast('File selected! Click "Process Syllabus" to analyze it.', 'success');
-        }
-
-        function validateFile(file) {
-            const maxSize = 10 * 1024 * 1024; // 10MB
-            const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-            const allowedExtensions = ['.pdf', '.docx'];
-            
-            if (file.size > maxSize) {
-                return { valid: false, message: 'File too large! Please use files under 10MB.' };
-            }
-            
-            if (file.name.toLowerCase().endsWith('.doc') && !file.name.toLowerCase().endsWith('.docx')) {
-                return { valid: false, message: 'Legacy .doc files are not supported. Please save as .docx format or convert to PDF.' };
-            }
-            
-            const hasValidType = allowedTypes.includes(file.type);
-            const hasValidExtension = allowedExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
-            
-            if (!hasValidType && !hasValidExtension) {
-                return { valid: false, message: 'Invalid file type! Please upload PDF or .docx documents only.' };
-            }
-            
-            if (file.size === 0) {
-                return { valid: false, message: 'File appears to be empty!' };
-            }
-            
-            return { valid: true, message: 'File validation passed!' };
-        }
-
-        function showFilePreview(file) {
-            const fileName = document.getElementById('previewFileName');
-            const fileSize = document.getElementById('previewFileSize');
-            const fileType = document.getElementById('previewFileType');
-            const fileIcon = document.getElementById('previewFileIcon');
-            
-            fileName.textContent = file.name;
-            fileSize.textContent = formatFileSize(file.size);
-            
-            if (file.name.toLowerCase().endsWith('.pdf')) {
-                fileIcon.textContent = '📄';
-                fileType.textContent = 'PDF Document';
-            } else if (file.name.toLowerCase().endsWith('.docx')) {
-                fileIcon.textContent = '📝';
-                fileType.textContent = 'Word Document (.docx)';
-            } else {
-                fileIcon.textContent = '📄';
-                fileType.textContent = 'Document';
-            }
-            
-            document.getElementById('filePreview').style.display = 'block';
-            document.getElementById('eventsSection').style.display = 'none';
-        }
-
-        function removeSelectedFile() {
-            selectedFile = null;
-            document.getElementById('filePreview').style.display = 'none';
-            document.getElementById('fileInput').value = '';
-            hideAllProcessingElements();
-            showToast('File removed. You can select a new file.', 'info');
-        }
-
-        async function processFile() {
-            if (!selectedFile) {
-                showToast('No file selected!', 'error');
-                return;
-            }
-            
-            if (!selectedCourse) {
-                showToast('No course selected!', 'error');
-                return;
-            }
-            
-            const processBtn = document.getElementById('processBtn');
-            processBtn.disabled = true;
-            processBtn.textContent = '⏳ Processing...';
             
             try {
-                showProgress();
+                showProgress('Publishing events...', 'Creating calendar events for all students');
                 
-                if (demoMode) {
-                    await processSyllabusDemo();
-                } else {
-                    await processSyllabusWithBackend();
-                }
-            } catch (error) {
-                console.error('❌ Processing error:', error);
-                showToast(`Error processing file: ${error.message}`, 'error');
-            } finally {
-                resetProcessButton();
-            }
-        }
-
-        async function processSyllabusDemo() {
-            updateProgress(25, 'Extracting text...', 'Reading document content');
-            const text = await extractText(selectedFile);
-            
-            updateProgress(75, 'Analyzing content...', 'Finding dates and events');
-            await sleep(2000); // Simulate processing time
-            
-            const events = generateDemoEvents();
-            
-            updateProgress(100, 'Complete!', `Found ${events.length} events`);
-            
-            setTimeout(() => {
-                hideAllProcessingElements();
-                displayEvents(events);
-            }, 1500);
-        }
-
-        async function processSyllabusWithBackend() {
-            try {
-                updateProgress(10, 'Uploading to server...', 'Sending your syllabus for analysis');
-                
-                const formData = new FormData();
-                formData.append('file', selectedFile);
-                
-                const response = await fetch(`${API_BASE_URL}/api/events/course/${selectedCourse.id}/syllabus`, {
+                const response = await fetch(`${API_BASE_URL}/api/courses/${selectedCourse.id}/events/publish`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${authToken}`
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
                     },
-                    body: formData
+                    body: JSON.stringify(extractedEvents)
                 });
                 
                 if (!response.ok) {
-                    const error = await response.json().catch(() => ({ detail: 'Failed to process syllabus' }));
-                    throw new Error(error.detail || 'Failed to process syllabus');
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Failed to publish events');
                 }
                 
-                updateProgress(75, 'AI analyzing syllabus...', 'Extracting dates and events');
-                const events = await response.json();
-                
-                updateProgress(100, 'Complete!', `Found ${events.length} events`);
-                
-                setTimeout(() => {
-                    hideAllProcessingElements();
-                    displayEvents(events);
-                }, 1500);
+                const result = await response.json();
+                showToast(`Successfully published ${result.events_created} events!`, 'success');
+                hideEventEditor();
                 
             } catch (error) {
-                console.error('❌ Backend processing failed, trying local processing:', error);
-                
-                // Fallback to local processing
-                updateProgress(30, 'Using local processing...', 'Extracting text from document');
-                const text = await extractText(selectedFile);
-                
-                updateProgress(70, 'Analyzing content...', 'Finding dates and events');
-                const events = await extractEventsLocally(text);
-                
-                updateProgress(100, 'Complete!', `Found ${events.length} events`);
-                
-                setTimeout(() => {
-                    hideAllProcessingElements();
-                    displayEvents(events);
-                }, 1500);
+                console.error('❌ Event publishing failed:', error);
+                showToast(`Publishing failed: ${error.message}`, 'error');
+            } finally {
+                hideProgress();
             }
         }
 
-        function generateDemoEvents() {
-            const today = new Date();
-            return [
-                {
-                    title: 'Midterm Exam',
-                    date: new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    time: '10:00',
-                    category: 'Exam',
-                    location: 'Classroom 101'
-                },
-                {
-                    title: 'Assignment 1 Due',
-                    date: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    time: '23:59',
-                    category: 'HW',
-                    location: null
-                },
-                {
-                    title: 'Group Project Presentation',
-                    date: new Date(today.getTime() + 21 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    time: '14:00',
-                    category: 'Project',
-                    location: 'Conference Room A'
-                }
-            ];
-        }
+        // ====================================================================
+        // PROGRESS & UI HELPERS
+        // ====================================================================
 
-        function showProgress() {
-            document.getElementById('progressContainer').style.display = 'block';
-            updateProgress(0, 'Starting...', 'Preparing to process your syllabus');
-        }
-
-        function updateProgress(percent, status, substatus) {
-            const angle = (percent / 100) * 360;
-            document.getElementById('progressCircle').style.background = `conic-gradient(var(--accent-primary) ${angle}deg, var(--medium-gray) ${angle}deg)`;
-            document.getElementById('progressText').textContent = `${Math.round(percent)}%`;
+        function showProgress(status, substatus) {
             document.getElementById('progressStatus').textContent = status;
             document.getElementById('progressSubstatus').textContent = substatus;
+            document.getElementById('progressContainer').style.display = 'block';
         }
 
-        function hideAllProcessingElements() {
+        function hideProgress() {
             document.getElementById('progressContainer').style.display = 'none';
-        }
-
-        function resetProcessButton() {
-            const processBtn = document.getElementById('processBtn');
-            processBtn.disabled = false;
-            processBtn.textContent = '🚀 Process Syllabus';
-        }
-
-        // ====================================================================
-        // TEXT EXTRACTION
-        // ====================================================================
-
-        async function extractText(file) {
-            if (file.type.includes('pdf')) {
-                return await extractPDFText(file);
-            } else if (file.name.toLowerCase().endsWith('.docx') || file.type.includes('wordprocessingml')) {
-                return await extractWordText(file);
-            } else {
-                throw new Error('Unsupported file format. Please use PDF or .docx files.');
-            }
-        }
-
-        async function extractPDFText(file) {
-            if (typeof pdfjsLib === 'undefined') {
-                throw new Error('PDF.js library not loaded');
-            }
-            
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-            let text = '';
-            
-            for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
-                const page = await pdf.getPage(i);
-                const textContent = await page.getTextContent();
-                text += textContent.items.map(item => item.str).join(' ') + '\n';
-            }
-            
-            return text;
-        }
-
-        async function extractWordText(file) {
-            try {
-                if (typeof mammoth === 'undefined') {
-                    throw new Error('Mammoth library not loaded');
-                }
-                
-                const arrayBuffer = await file.arrayBuffer();
-                const result = await mammoth.extractRawText({arrayBuffer: arrayBuffer});
-                
-                if (!result.value || result.value.trim().length === 0) {
-                    throw new Error('No text could be extracted from the Word document');
-                }
-                
-                return result.value;
-            } catch (error) {
-                console.error('❌ Error extracting Word document:', error);
-                throw new Error('Failed to extract text from Word document. Please try converting to PDF or ensure the file is a valid .docx file.');
-            }
-        }
-
-        // ====================================================================
-        // EVENT EXTRACTION (Local Fallback)
-        // ====================================================================
-
-        async function extractEventsLocally(text) {
-            const events = [];
-            const lines = text.split('\n');
-            
-            for (const line of lines) {
-                // Simple pattern matching for common syllabus patterns
-                const datePattern = /(\d{1,2}\/\d{1,2}\/?\d{0,4}|\d{1,2}-\d{1,2}-?\d{0,4}|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)/i;
-                const assignmentPattern = /(exam|test|quiz|assignment|homework|project|due|deadline)/i;
-                
-                if (datePattern.test(line) && assignmentPattern.test(line)) {
-                    events.push({
-                        title: line.trim().substring(0, 100),
-                        date: new Date().toISOString().split('T')[0], // Placeholder date
-                        time: null,
-                        category: 'Other',
-                        location: null
-                    });
-                }
-            }
-            
-            // Add some demo events if nothing found
-            if (events.length === 0) {
-                return generateDemoEvents();
-            }
-            
-            return events;
-        }
-
-        // ====================================================================
-        // EVENT DISPLAY
-        // ====================================================================
-
-        function displayEvents(events) {
-            extractedEvents = events;
-            const eventsList = document.getElementById('eventsList');
-            
-            if (events.length === 0) {
-                eventsList.innerHTML = `
-                    <div style="text-align: center; color: var(--secondary-black); padding: 40px;">
-                        <h3>No events found in the syllabus</h3>
-                        <p>The AI couldn't detect any specific dates or assignments in this document.</p>
-                        <p style="font-size: 0.9rem; margin-top: 16px;">
-                            <strong>Tip:</strong> Make sure your syllabus contains clear dates and assignment descriptions.
-                        </p>
-                    </div>
-                `;
-            } else {
-                eventsList.innerHTML = `
-                    <div style="background: var(--light-gray); border-radius: 8px; padding: 20px; margin-bottom: 24px; text-align: center;">
-                        <h3 style="color: var(--primary-black); margin-bottom: 12px;">📅 Found ${events.length} Events</h3>
-                        <p style="color: var(--secondary-black); margin-bottom: 16px;">
-                            Review the extracted events below. You can edit any event before adding to your calendar.
-                        </p>
-                        <p style="color: var(--secondary-black); font-size: 0.9rem;">
-                            <strong>Course:</strong> ${selectedCourse.title} (${selectedCourse.code})
-                        </p>
-                    </div>
-                    ${events.map((event, index) => `
-                        <div class="event-item">
-                            <button class="edit-btn" onclick="editEvent(${index})">Edit</button>
-                            <div class="event-title">${event.title}</div>
-                            <div class="event-date">${formatDate(event.date)}${event.time ? ` at ${formatTime(event.time)}` : ' (All Day)'}</div>
-                            ${event.location ? `<div class="event-location">📍 ${event.location}</div>` : ''}
-                            <span class="event-category category-${event.category.toLowerCase()}">${event.category}</span>
-                        </div>
-                    `).join('')}
-                `;
-            }
-            
-            document.getElementById('eventsSection').style.display = 'block';
-            
-            if (events.length > 0) {
-                showToast(`Found ${events.length} events! Review them and add to your calendar when ready.`, 'success');
-            }
-        }
-
-        // ====================================================================
-        // GOOGLE CALENDAR INTEGRATION
-        // ====================================================================
-
-        async function addToGoogleCalendar() {
-            if (!googleApiReady) {
-                showToast('Google Calendar is not available. Please refresh the page and try again.', 'error');
-                return;
-            }
-            
-            if (extractedEvents.length === 0) {
-                showToast('No events to add to calendar', 'error');
-                return;
-            }
-
-            try {
-                // Check if we have calendar access
-                const token = gapi.client.getToken();
-                if (!token || !token.access_token) {
-                    // Request calendar access
-                    await requestCalendarAccess();
-                }
-                
-                let successCount = 0;
-                
-                for (const event of extractedEvents) {
-                    await createCalendarEvent(event);
-                    successCount++;
-                    await sleep(300); // Small delay between requests
-                }
-                
-                showToast(`Successfully added ${successCount} events to Google Calendar!`, 'success');
-                
-            } catch (error) {
-                console.error('❌ Failed to add events to calendar:', error);
-                showToast(`Failed to add events to calendar: ${error.message}`, 'error');
-            }
-        }
-
-        async function requestCalendarAccess() {
-            return new Promise((resolve, reject) => {
-                try {
-                    if (!google || !google.accounts || !google.accounts.oauth2) {
-                        throw new Error('Google OAuth2 not available');
-                    }
-
-                    const tokenClient = google.accounts.oauth2.initTokenClient({
-                        client_id: GOOGLE_CLIENT_ID,
-                        scope: 'https://www.googleapis.com/auth/calendar',
-                        callback: (response) => {
-                            if (response.error) {
-                                reject(new Error(response.error));
-                                return;
-                            }
-                            gapi.client.setToken({ access_token: response.access_token });
-                            resolve();
-                        }
-                    });
-
-                    tokenClient.requestAccessToken({ prompt: 'consent' });
-                } catch (error) {
-                    reject(error);
-                }
-            });
-        }
-
-        async function createCalendarEvent(event) {
-            let startDateTime, endDateTime;
-            
-            if (event.time) {
-                const [hours, minutes] = event.time.split(':');
-                startDateTime = new Date(event.date);
-                startDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-                
-                endDateTime = new Date(startDateTime);
-                endDateTime.setHours(endDateTime.getHours() + 1);
-            } else {
-                startDateTime = new Date(event.date);
-                endDateTime = new Date(startDateTime);
-                endDateTime.setDate(endDateTime.getDate() + 1);
-            }
-            
-            const calendarEvent = {
-                summary: event.title,
-                description: `Course: ${selectedCourse.title} (${selectedCourse.code})\nCategory: ${event.category}${event.location ? `\nLocation: ${event.location}` : ''}`,
-                start: event.time ? {
-                    dateTime: startDateTime.toISOString(),
-                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-                } : {
-                    date: event.date
-                },
-                end: event.time ? {
-                    dateTime: endDateTime.toISOString(),
-                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-                } : {
-                    date: endDateTime.toISOString().split('T')[0]
-                }
-            };
-            
-            if (event.location) {
-                calendarEvent.location = event.location;
-            }
-            
-            const response = await gapi.client.calendar.events.insert({
-                calendarId: 'primary',
-                resource: calendarEvent
-            });
-            
-            return response.result;
-        }
-
-        // ====================================================================
-        // EVENT EDITING (Simplified)
-        // ====================================================================
-
-        function editEvent(index) {
-            const event = extractedEvents[index];
-            const newTitle = prompt('Edit event title:', event.title);
-            
-            if (newTitle && newTitle.trim()) {
-                extractedEvents[index].title = newTitle.trim();
-                displayEvents(extractedEvents);
-                showToast('Event updated!', 'success');
-            }
-        }
-
-        // ====================================================================
-        // UTILITY FUNCTIONS
-        // ====================================================================
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-        }
-
-        function formatTime(timeString) {
-            if (!timeString) return '';
-            
-            const [hours, minutes] = timeString.split(':');
-            const hour = parseInt(hours);
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            const displayHour = hour % 12 || 12;
-            
-            return `${displayHour}:${minutes} ${ampm}`;
         }
 
         function showToast(message, type = 'info') {
@@ -2513,11 +1605,6 @@
             }, 4000);
         }
 
-        function hideMessages() {
-            document.getElementById('errorMessage').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'none';
-        }
-
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
@@ -2526,31 +1613,26 @@
         // EVENT LISTENERS
         // ====================================================================
 
-        // Close modals on escape key
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 closeCreateCourseModal();
             }
         });
 
-        // Close modals when clicking outside
         document.addEventListener('click', (event) => {
             if (event.target.classList.contains('modal-overlay')) {
                 closeCreateCourseModal();
             }
         });
 
-        // Handle course code input
-        document.addEventListener('DOMContentLoaded', function() {
-            const courseCodeInput = document.getElementById('courseCodeInput');
-            if (courseCodeInput) {
-                courseCodeInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        handleJoinCourse();
-                    }
-                });
-            }
+        // Enter key for course search
+        document.getElementById('crnInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchCourse();
         });
     </script>
 </body>
-</html>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="
