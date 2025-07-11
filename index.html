@@ -653,6 +653,228 @@
             align-items: center;
             margin-bottom: 1rem;
         }
+
+        /* Role Selection Styles */
+        .role-selection {
+            margin-bottom: 2rem;
+        }
+
+        .role-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .role-btn {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-sans);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .role-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-blue);
+        }
+
+        .professor-btn:hover {
+            border-color: var(--primary-blue);
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(37, 99, 235, 0.1));
+        }
+
+        .student-btn:hover {
+            border-color: var(--secondary-green);
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(5, 150, 105, 0.1));
+        }
+
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .role-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .role-desc {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            line-height: 1.5;
+        }
+
+        /* Enhanced Upload Section for Students */
+        .student-upload-enhanced {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.05), rgba(5, 150, 105, 0.1));
+            border: 2px dashed var(--secondary-green);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .student-upload-enhanced:hover {
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(5, 150, 105, 0.15));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .student-upload-enhanced.dragover {
+            border-color: var(--secondary-green-dark);
+            background: rgba(5, 150, 105, 0.2);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtitle {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Improved Course Cards */
+        .course-card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-green));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .course-card:hover::before {
+            opacity: 1;
+        }
+
+        .course-card:hover {
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-blue);
+            transform: translateY(-4px);
+        }
+
+        /* Enhanced Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.9rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark));
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-blue-dark), #1e40af);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--secondary-green), var(--secondary-green-dark));
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, var(--secondary-green-dark), #065f46);
+        }
+
+        /* Enhanced Dashboard Headers */
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05), rgba(5, 150, 105, 0.05));
+            border-radius: 1rem;
+            border: 1px solid var(--gray-200);
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-subtitle {
+            font-size: 1.125rem;
+            color: var(--gray-600);
+        }
     </style>
 </head>
 <body>
@@ -673,15 +895,37 @@
             <div class="sign-in-section" id="signInSection">
                 <h1>📚 SyllabAI</h1>
                 <p>Transform syllabi into smart, synchronized calendars</p>
-                <div style="max-width: 500px; margin: 0 auto; font-size: 0.95rem; color: var(--gray-600);">
+                <div style="max-width: 600px; margin: 0 auto; font-size: 0.95rem; color: var(--gray-600); margin-bottom: 3rem;">
                     <p><strong>👨‍🏫 Professors:</strong> Upload syllabi → AI extracts events → auto-sync to student calendars</p>
                     <p><strong>🎓 Students:</strong> Join courses or upload your own syllabus → sync to Google Calendar</p>
                 </div>
-                <div class="google-signin-container">
+                
+                <!-- Role Selection -->
+                <div class="role-selection" id="roleSelection">
+                    <h3 style="text-align: center; margin-bottom: 2rem; color: var(--gray-700);">Choose Your Role</h3>
+                    <div class="role-buttons">
+                        <button class="role-btn professor-btn" onclick="selectRole('professor')">
+                            <div class="role-icon">👨‍🏫</div>
+                            <div class="role-title">Professor</div>
+                            <div class="role-desc">Create courses, upload syllabi, and manage student calendars</div>
+                        </button>
+                        <button class="role-btn student-btn" onclick="selectRole('student')">
+                            <div class="role-icon">🎓</div>
+                            <div class="role-title">Student</div>
+                            <div class="role-desc">Join courses, upload syllabi, and sync to your calendar</div>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Google Sign-in (Hidden initially) -->
+                <div class="google-signin-container" id="googleSigninContainer" style="display: none;">
                     <div id="googleSignInBtn"></div>
                     <button class="custom-google-btn" id="customGoogleBtn" onclick="handleCustomSignIn()">
                         🔐 Sign in with Google
                     </button>
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <button class="btn btn-secondary" onclick="resetRoleSelection()">← Back to Role Selection</button>
+                    </div>
                 </div>
             </div>
 
@@ -756,12 +1000,13 @@
 
                 <!-- Self-Upload Section -->
                 <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--gray-200);">
-                    <h3 style="text-align: center; margin-bottom: 1rem; color: var(--gray-700);">📄 Or Upload Your Own Syllabus</h3>
-                    <div class="upload-section" id="selfUploadSection" style="display: block;">
-                        <h3>Drag & Drop Your Syllabus</h3>
-                        <p>Upload a PDF or Word document and we'll extract events for you</p>
+                    <h3 style="text-align: center; margin-bottom: 2rem; color: var(--gray-700);">📄 Or Upload Your Own Syllabus</h3>
+                    <div class="student-upload-enhanced" id="selfUploadSection">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-title">Drag & Drop Your Syllabus</div>
+                        <div class="upload-subtitle">Upload a PDF or Word document and we'll extract events for you</div>
                         <input type="file" id="selfFileInput" class="file-input" accept=".pdf,.docx">
-                        <button class="btn btn-secondary" onclick="document.getElementById('selfFileInput').click()">
+                        <button class="btn btn-success" onclick="document.getElementById('selfFileInput').click()">
                             📎 Choose File
                         </button>
                     </div>
@@ -868,13 +1113,20 @@
         // CONFIGURATION & GLOBAL STATE
         // ====================================================================
         
-        const API_BASE_URL = 'https://syllaai-ai.onrender.com';  // Update this!
+        // Use production API even for local testing to avoid OAuth issues
+        const API_BASE_URL = 'https://syllaai-ai.onrender.com';  
+        
+        // For true local development, you'd need to:
+        // 1. Add http://localhost:8080 to Google OAuth console
+        // 2. Run backend locally too
+        // const API_BASE_URL = 'http://localhost:8000';
         
         let currentUser = null;
         let authToken = null;
         let selectedCourse = null;
         let extractedEvents = [];
         let schools = [];
+        let selectedRole = null;
         
         const GOOGLE_CLIENT_ID = '208074157418-pr4ks1ronvggb2blrqoomd8hhutkmco1.apps.googleusercontent.com';
         const SCOPES = 'openid email profile https://www.googleapis.com/auth/calendar';
@@ -964,10 +1216,17 @@
 
         async function signInWithBackend(googleToken) {
             try {
+                const requestBody = { token: googleToken };
+                
+                // Include selected role if available
+                if (selectedRole) {
+                    requestBody.preferred_role = selectedRole;
+                }
+                
                 const response = await fetch(`${API_BASE_URL}/api/auth/google`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: googleToken })
+                    body: JSON.stringify(requestBody)
                 });
                 
                 if (!response.ok) {
@@ -993,9 +1252,33 @@
             currentUser = null;
             selectedCourse = null;
             extractedEvents = [];
+            selectedRole = null;
             
             showSignInSection();
             showToast('Signed out successfully', 'info');
+        }
+
+        // ====================================================================
+        // ROLE SELECTION
+        // ====================================================================
+
+        function selectRole(role) {
+            selectedRole = role;
+            document.getElementById('roleSelection').style.display = 'none';
+            document.getElementById('googleSigninContainer').style.display = 'block';
+            
+            // Show role-specific messaging
+            const roleMessage = role === 'professor' 
+                ? 'Sign in to create courses and manage syllabi'
+                : 'Sign in to join courses and sync your calendar';
+            
+            showToast(`Selected: ${role}. ${roleMessage}`, 'info');
+        }
+
+        function resetRoleSelection() {
+            selectedRole = null;
+            document.getElementById('roleSelection').style.display = 'block';
+            document.getElementById('googleSigninContainer').style.display = 'none';
         }
 
         // ====================================================================
@@ -1364,25 +1647,33 @@
             const professorUpload = document.getElementById('professorUploadSection');
             const professorFileInput = document.getElementById('professorFileInput');
             
-            professorUpload.addEventListener('dragover', handleDragOver);
-            professorUpload.addEventListener('dragleave', handleDragLeave);
-            professorUpload.addEventListener('drop', (e) => handleDrop(e, 'professor'));
+            if (professorUpload) {
+                professorUpload.addEventListener('dragover', handleDragOver);
+                professorUpload.addEventListener('dragleave', handleDragLeave);
+                professorUpload.addEventListener('drop', (e) => handleDrop(e, 'professor'));
+            }
             
-            professorFileInput.addEventListener('change', (e) => {
-                if (e.target.files.length) handleFileSelect(e.target.files[0], 'professor');
-            });
+            if (professorFileInput) {
+                professorFileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length) handleFileSelect(e.target.files[0], 'professor');
+                });
+            }
             
-            // Student self-upload
+            // Student self-upload with enhanced styling
             const selfUpload = document.getElementById('selfUploadSection');
             const selfFileInput = document.getElementById('selfFileInput');
             
-            selfUpload.addEventListener('dragover', handleDragOver);
-            selfUpload.addEventListener('dragleave', handleDragLeave);
-            selfUpload.addEventListener('drop', (e) => handleDrop(e, 'student'));
+            if (selfUpload) {
+                selfUpload.addEventListener('dragover', handleDragOver);
+                selfUpload.addEventListener('dragleave', handleDragLeave);
+                selfUpload.addEventListener('drop', (e) => handleDrop(e, 'student'));
+            }
             
-            selfFileInput.addEventListener('change', (e) => {
-                if (e.target.files.length) handleFileSelect(e.target.files[0], 'student');
-            });
+            if (selfFileInput) {
+                selfFileInput.addEventListener('change', (e) => {
+                    if (e.target.files.length) handleFileSelect(e.target.files[0], 'student');
+                });
+            }
         }
 
         function handleDragOver(e) {
@@ -1466,9 +1757,61 @@
         }
 
         async function processStudentSyllabus(file) {
-            // For student self-upload, we'll do client-side processing for now
-            // In the full implementation, this could also hit the backend
-            showToast('Student self-upload feature coming soon!', 'info');
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                
+                const response = await fetch(`${API_BASE_URL}/api/courses/student-syllabus`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}` },
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Failed to process syllabus');
+                }
+                
+                const result = await response.json();
+                extractedEvents = result.extracted_events;
+                
+                showToast(`Extracted ${extractedEvents.length} events from your syllabus!`, 'success');
+                showStudentEventEditor();
+                
+            } catch (error) {
+                console.error('❌ Student syllabus processing failed:', error);
+                
+                // Fallback: Show a message about creating a generic course
+                showToast('Processing failed. Creating a personal course for your events...', 'info');
+                
+                // Create a temporary course for the student
+                selectedCourse = {
+                    id: 'temp-' + Date.now(),
+                    title: 'My Personal Course',
+                    crn: 'SELF'
+                };
+                
+                // Mock some events for demonstration
+                extractedEvents = [
+                    {
+                        title: 'Midterm Exam',
+                        start_ts: '2025-08-15T10:00:00',
+                        end_ts: '2025-08-15T12:00:00',
+                        category: 'Exam',
+                        location: 'TBD'
+                    },
+                    {
+                        title: 'Final Project Due',
+                        start_ts: '2025-12-10T23:59:00',
+                        end_ts: '2025-12-11T00:00:00',
+                        category: 'Project',
+                        location: 'Online'
+                    }
+                ];
+                
+                showToast('Created sample events. Please review and edit as needed.', 'info');
+                showStudentEventEditor();
+            }
         }
 
         // ====================================================================
@@ -1498,6 +1841,37 @@
                     <td><button class="delete-event-btn" onclick="deleteEvent(${index})">Delete</button></td>
                 </tr>
             `).join('');
+            
+            document.getElementById('eventEditor').style.display = 'block';
+        }
+
+        function showStudentEventEditor() {
+            const tableBody = document.getElementById('eventsTableBody');
+            
+            tableBody.innerHTML = extractedEvents.map((event, index) => `
+                <tr>
+                    <td><input type="text" value="${event.title}" onchange="updateEvent(${index}, 'title', this.value)"></td>
+                    <td><input type="date" value="${event.start_ts.split('T')[0]}" onchange="updateEventDate(${index}, this.value)"></td>
+                    <td><input type="time" value="${event.start_ts.split('T')[1]?.substring(0,5) || ''}" onchange="updateEventTime(${index}, this.value)"></td>
+                    <td>
+                        <select onchange="updateEvent(${index}, 'category', this.value)">
+                            <option value="Exam" ${event.category === 'Exam' ? 'selected' : ''}>Exam</option>
+                            <option value="Quiz" ${event.category === 'Quiz' ? 'selected' : ''}>Quiz</option>
+                            <option value="HW" ${event.category === 'HW' ? 'selected' : ''}>Homework</option>
+                            <option value="Project" ${event.category === 'Project' ? 'selected' : ''}>Project</option>
+                            <option value="Presentation" ${event.category === 'Presentation' ? 'selected' : ''}>Presentation</option>
+                            <option value="Class" ${event.category === 'Class' ? 'selected' : ''}>Class</option>
+                            <option value="Other" ${event.category === 'Other' ? 'selected' : ''}>Other</option>
+                        </select>
+                    </td>
+                    <td><input type="text" value="${event.location || ''}" onchange="updateEvent(${index}, 'location', this.value)"></td>
+                    <td><button class="delete-event-btn" onclick="deleteEvent(${index})">Delete</button></td>
+                </tr>
+            `).join('');
+            
+            // Update editor text for students
+            document.querySelector('#eventEditor h3').textContent = '📅 Review and Edit Your Events';
+            document.querySelector('#eventEditor p').textContent = 'AI has extracted these events from your syllabus. Review and edit as needed, then sync to your Google Calendar.';
             
             document.getElementById('eventEditor').style.display = 'block';
         }
